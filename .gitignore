@@ -6,3 +6,5 @@ dist/
 .env
 *.env
 server/.env
+# Local config z kluczami – tylko na moim kompie
+local-config.yaml

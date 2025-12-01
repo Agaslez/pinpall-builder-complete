@@ -1,10 +1,10 @@
 import express, { type Express } from "express";
 import fs from "fs";
-import path from "path";
-import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
-import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
+import path from "path";
+import { createLogger, createServer as createViteServer } from "vite";
+import viteConfig from "../vite.config";
 
 const viteLogger = createLogger();
 
@@ -68,18 +68,60 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
-
+  // POPRAWIONA ŚCIEŻKA: zamiast "public" -> "../dist/public"
+  const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
+  
+  console.log(`📁 Looking for static files in: ${distPath}`);
+  
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
+    console.error(`❌ Build directory not found: ${distPath}`);
+    console.log('⚠️  Please run: npm run build');
+    
+    // Sprawdź co jest w dist
+    const parentDist = path.resolve(import.meta.dirname, "..", "dist");
+    if (fs.existsSync(parentDist)) {
+      console.log('📁 Contents of dist directory:');
+      const items = fs.readdirSync(parentDist);
+      items.forEach(item => {
+        const itemPath = path.join(parentDist, item);
+        const stats = fs.statSync(itemPath);
+        console.log(`  ${item} ${stats.isDirectory() ? '(dir)' : '(file)'}`);
+      });
+    }
+    
+    // Utwórz tymczasowy index.html
+    const tempHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head><title>PINpall - Build Required</title></head>
+        <body>
+          <h1>Build Required</h1>
+          <p>Please run: <code>npm run build</code></p>
+          <p>Then refresh this page.</p>
+        </body>
+      </html>
+    `;
+    
+    app.use("*", (req: any, res: any) => {
+      if (req.path === "/api/health") {
+        res.json({ status: "build-required", message: "Please run npm run build" });
+      } else {
+        res.send(tempHtml);
+      }
+    });
+    
+    return;
   }
 
+  console.log(`✅ Serving static files from: ${distPath}`);
   app.use(express.static(distPath));
 
-  // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  // SPA fallback routing - POPRAWIONE
+  app.use("*", (req: any, res: any) => {
+    if (!req.path.startsWith("/api")) {
+      res.sendFile(path.resolve(distPath, "index.html"));
+    } else {
+      res.status(404).json({ error: "Not found" });
+    }
   });
 }
