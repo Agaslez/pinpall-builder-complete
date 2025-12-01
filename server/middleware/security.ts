@@ -1,55 +1,49 @@
 // server/middleware/security.ts
-import compression from 'compression';
-import cors from 'cors';
-import type { Express } from 'express';
-import rateLimit from 'express-rate-limit';
-import helmet from 'helmet';
-import { config } from '../config/env';
+import cors from "cors";
+import type { Express } from "express";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 
+const isProd = process.env.NODE_ENV === "production";
+
+/**
+ * Globalne middleware bezpieczeństwa:
+ * - helmet (nagłówki)
+ * - CORS
+ * - rate-limit na API
+ */
 export function applySecurity(app: Express) {
-  app.set('trust proxy', 1); // żeby X-Forwarded-For działało poprawnie za proxy
-
-  app.use(
-    cors({
-      origin: (origin, callback) => {
-        if (!origin) return callback(null, true); // np. curl, Postman
-        if (config.corsOrigins.includes(origin)) {
-          return callback(null, true);
-        }
-        return callback(new Error(`Not allowed by CORS: ${origin}`));
-      },
-      credentials: true,
-    }),
-  );
-
+  // Helmet – podstawowe nagłówki ochronne
   app.use(
     helmet({
-      contentSecurityPolicy:
-        config.nodeEnv === 'production'
-          ? {
-              useDefaults: true,
-              directives: {
-                defaultSrc: ["'self'"],
-                imgSrc: ["'self'", 'data:', 'https:'],
-                scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-                styleSrc: ["'self'", "'unsafe-inline'"],
-                connectSrc: ["'self'"],
-              },
-            }
-          : false, // w dev CSP wyłączone (łatwiej debugować)
-    }),
+      contentSecurityPolicy: isProd
+        ? undefined
+        : false, // w dev często przeszkadza, w prod możesz doprecyzować
+    })
   );
 
-  app.use(compression());
+  // CORS – na razie prosty, można później zawęzić origin
+  app.use(
+    cors({
+      origin: isProd ? ["https://pinpall.app", "https://www.pinpall.app"] : true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "x-project-kind",
+        "x-requested-with",
+      ],
+      credentials: false,
+    })
+  );
 
-  const limiter = rateLimit({
-    windowMs: config.rateLimitWindowMs,
-    max: config.rateLimitMax,
+  // Prostego rate-limitera zakładamy TYLKO na /api
+  const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minut
+    max: isProd ? 200 : 1000, // mniej agresywnie w dev
     standardHeaders: true,
     legacyHeaders: false,
-    message: { error: 'Too many requests, please try again later.' },
   });
 
-  // Rate limit tylko na API (nie na assety)
-  app.use('/api', limiter);
+  app.use("/api", apiLimiter);
 }

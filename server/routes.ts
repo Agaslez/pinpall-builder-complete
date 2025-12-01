@@ -16,16 +16,13 @@ import {
   validateBody,
 } from "./validation";
 
-// 🔌 Broker / adapter
 import { buildProjectSpec } from "./broker";
-import type { ChatInput, ProjectKind } from "./broker/types";
+import type { ProjectKind } from "./broker/types";
+import { HttpError } from "./middleware/error";
 
-/**
- * Ustala typ projektu:
- * - nagłówek:  x-project-kind: pinpall|talism|deepintel|generic
- * - body:      projectKind:  ...
- * Domyślnie: "generic"
- */
+// ✅ NOWE: normalizacja wejścia czatu (TURA 1)
+import { normalizeChatInput } from "./pipeline/chatInput";
+
 function resolveProjectKind(req: Request): ProjectKind {
   const fromHeader = req.header("x-project-kind") as ProjectKind | undefined;
   const fromBody =
@@ -42,74 +39,85 @@ export async function registerRoutes(app: Express) {
   const chatImporter = new ChatImporter();
 
   // -----------------------------
+  // 🩺 /api/health – prosty healthcheck
+  // -----------------------------
+  app.get("/api/health", (_req, res) => {
+    res.json({
+      status: "ok",
+      env: process.env.NODE_ENV || "development",
+      time: new Date().toISOString(),
+    });
+  });
+
+  // -----------------------------
   // 📥 /api/parse-chat – upload pliku z czatem
   // -----------------------------
-  app.post("/api/parse-chat", upload.single("chatFile"), async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ error: "No file uploaded" });
-      }
+  app.post(
+    "/api/parse-chat",
+    upload.single("chatFile"),
+    async (req, res, next) => {
+      try {
+        if (!req.file) {
+          throw new HttpError(400, "No file uploaded");
+        }
 
-      const projectKind = resolveProjectKind(req);
+        const projectKind = resolveProjectKind(req);
 
-      const content = req.file.buffer.toString("utf-8");
+        // ✅ TURA 1 – normalizacja + limity
+        const normalized = normalizeChatInput(
+          req.file.buffer.toString("utf-8"),
+          "file",
+          req.file.originalname
+        );
 
-      const chatInput: ChatInput = {
-        rawText: content,
-        source: "file",
-        fileName: req.file.originalname,
-      };
+        // ✅ TURA 2 – spec projektu (broker)
+        const spec = await buildProjectSpec(projectKind, normalized);
 
-      const spec = await buildProjectSpec(projectKind, chatInput);
+        // ✅ TURA 3 – parser właściwy
+        const parser = new ChatParser(normalized.rawText);
+        const parsed = parser.parse();
 
-      const parser = new ChatParser(content);
-      const parsed = parser.parse();
+        const projectId = uuidv4();
+        const baseName = normalized.fileName.replace(/\.[^.]+$/, "");
+        const projectName = `[${spec.kind}] ${baseName}`;
 
-      const projectId = uuidv4();
-      const baseName = req.file.originalname.replace(/\.[^.]+$/, "");
-      const projectName = `[${spec.kind}] ${baseName}`;
-
-      // TypeScript marudzi na typ – runtime jest OK, więc ignorujemy
-      // @ts-ignore
-      await storage.createParseProject({
-        name: projectName,
-        originalFileName: req.file.originalname,
-      });
-
-      for (const file of parsed.files) {
-        // @ts-ignore
-        await storage.createParsedFile({
-          projectId,
-          filePath: file.path || "untitled",
-          content: file.content || "",
-          fileType: file.type as "file" | "folder",
-          language: file.language,
+        await storage.createParseProject({
+          name: projectName,
+          originalFileName: normalized.fileName,
         });
-      }
 
-      for (const element of parsed.unrecognizedBlocks) {
-        // @ts-ignore
-        await storage.createUnrecognizedElement({
+        for (const file of parsed.files) {
+          await storage.createParsedFile({
+            projectId,
+            filePath: file.path || "untitled",
+            content: file.content || "",
+            fileType: file.type as "file" | "folder",
+            language: file.language,
+          });
+        }
+
+        for (const element of parsed.unrecognizedBlocks) {
+          await storage.createUnrecognizedElement({
+            projectId,
+            content: element.content || "",
+            lineNumber: element.lineNumber || 0,
+            context: element.context || "",
+            suggestedType: element.suggestedType || "unknown",
+          });
+        }
+
+        res.status(201).json({
           projectId,
-          content: element.content || "",
-          lineNumber: element.lineNumber || 0,
-          context: element.context || "",
-          suggestedType: "unknown",
+          projectKind: spec.kind,
+          projectName,
+          filesFound: parsed.files.filter((f) => f.type === "file").length,
+          unrecognizedCount: parsed.unrecognizedBlocks.length,
         });
+      } catch (err) {
+        next(err);
       }
-
-      res.json({
-        projectId,
-        projectKind: spec.kind,
-        projectName,
-        filesFound: parsed.files.filter((f) => f.type === "file").length,
-        unrecognizedCount: parsed.unrecognizedBlocks.length,
-      });
-    } catch (error) {
-      console.error("Parse error:", error);
-      res.status(500).json({ error: "Failed to parse chat" });
     }
-  });
+  );
 
   // -----------------------------
   // 🌐 /api/import-chat – z URL albo JSON
@@ -118,7 +126,7 @@ export async function registerRoutes(app: Express) {
     "/api/import-chat",
     express.json({ limit: "50mb" }),
     validateBody(importChatSchema),
-    async (req, res) => {
+    async (req, res, next) => {
       try {
         const { url, json, source } = req.body as {
           url?: string;
@@ -127,7 +135,7 @@ export async function registerRoutes(app: Express) {
           projectKind?: ProjectKind;
         };
 
-        const projectKind = resolveProjectKind(req);
+        const projectKind = resolveProjectKind(req as Request);
 
         let content: string;
         let chatSource: "url" | "json";
@@ -142,34 +150,35 @@ export async function registerRoutes(app: Express) {
           content = result.content;
           chatSource = "json";
         } else {
-          return res.status(400).json({ error: "Provide url or json" });
+          throw new HttpError(400, "Provide url or json");
         }
 
-        const chatInput: ChatInput = {
-          rawText: content,
-          source: chatSource,
-          fileName: `${source || "import"}.txt`,
-        };
+        // ✅ TURA 1 – normalizacja dla importu
+        const normalized = normalizeChatInput(
+          content,
+          chatSource,
+          `${source || "import"}.txt`
+        );
 
-        const spec = await buildProjectSpec(projectKind, chatInput);
+        // ✅ TURA 2 – spec projektu
+        const spec = await buildProjectSpec(projectKind, normalized);
 
-        const parser = new ChatParser(content);
+        // ✅ TURA 3 – parser
+        const parser = new ChatParser(normalized.rawText);
         const parsed = parser.parse();
 
         const projectId = uuidv4();
 
-        const projectName = `[${spec.kind}] ${
-          source || "Chat"
-        }_${new Date().toISOString().slice(0, 10)}`;
+        const projectName = `[${spec.kind}] ${source || "Chat"}_${new Date()
+          .toISOString()
+          .slice(0, 10)}`;
 
-        // @ts-ignore
         await storage.createParseProject({
           name: projectName,
-          originalFileName: `${source || "import"}.txt`,
+          originalFileName: normalized.fileName,
         });
 
         for (const file of parsed.files) {
-          // @ts-ignore
           await storage.createParsedFile({
             projectId,
             filePath: file.path || "untitled",
@@ -180,26 +189,24 @@ export async function registerRoutes(app: Express) {
         }
 
         for (const element of parsed.unrecognizedBlocks) {
-          // @ts-ignore
           await storage.createUnrecognizedElement({
             projectId,
             content: element.content || "",
             lineNumber: element.lineNumber || 0,
             context: element.context || "",
-            suggestedType: "unknown",
+            suggestedType: element.suggestedType || "unknown",
           });
         }
 
-        res.json({
+        res.status(201).json({
           projectId,
           projectKind: spec.kind,
           projectName,
           filesFound: parsed.files.filter((f) => f.type === "file").length,
           unrecognizedCount: parsed.unrecognizedBlocks.length,
         });
-      } catch (error) {
-        console.error("Import error:", error);
-        res.status(500).json({ error: `Failed to import: ${error}` });
+      } catch (err) {
+        next(err);
       }
     }
   );
@@ -207,58 +214,52 @@ export async function registerRoutes(app: Express) {
   // -----------------------------
   // 📂 /api/projects – lista projektów
   // -----------------------------
-  app.get("/api/projects", async (_req, res) => {
+  app.get("/api/projects", async (_req, res, next) => {
     try {
       const projects = await storage.getAllParseProjects();
       res.json(projects);
-    } catch (error) {
-      console.error("List projects error:", error);
-      res.status(500).json({ error: "Failed to list projects" });
+    } catch (err) {
+      next(err);
     }
   });
 
   // -----------------------------
   // 📁 /api/projects/:id – detale projektu
   // -----------------------------
-  app.get("/api/projects/:id", async (req, res) => {
+  app.get("/api/projects/:id", async (req, res, next) => {
     try {
       const project = await storage.getParseProject(req.params.id);
       if (!project) {
         return res.status(404).json({ error: "Project not found" });
       }
       res.json(project);
-    } catch (error) {
-      console.error("Get project error:", error);
-      res.status(500).json({ error: "Failed to get project" });
+    } catch (err) {
+      next(err);
     }
   });
 
   // -----------------------------
   // 🧩 /api/unrecognized/:id – update elementu
   // -----------------------------
-  app.put("/api/unrecognized/:id", express.json(), async (req, res) => {
+  app.put("/api/unrecognized/:id", express.json(), async (req, res, next) => {
     try {
       const { resolved, suggestedType } = req.body;
 
-      // @ts-ignore
       await storage.updateUnrecognizedElement(req.params.id, {
         resolved,
         suggestedType,
       });
 
       res.json({ success: true });
-    } catch (error) {
-      console.error("Error updating unrecognized element:", error);
-      res
-        .status(500)
-        .json({ error: "Błąd podczas aktualizacji elementu" });
+    } catch (err) {
+      next(err);
     }
   });
 
   // -----------------------------
   // 📦 /api/projects/:id/download – ZIP z projektem
   // -----------------------------
-  app.get("/api/projects/:id/download", async (req, res) => {
+  app.get("/api/projects/:id/download", async (req, res, next) => {
     try {
       const fullProject = await storage.getFullProject(req.params.id);
 
@@ -309,9 +310,8 @@ export async function registerRoutes(app: Express) {
       });
 
       res.send(zipBuffer);
-    } catch (error) {
-      console.error("Download error:", error);
-      res.status(500).json({ error: "Failed to generate ZIP" });
+    } catch (err) {
+      next(err);
     }
   });
 
@@ -322,7 +322,7 @@ export async function registerRoutes(app: Express) {
     "/api/checkout",
     express.json(),
     validateBody(checkoutSchema),
-    async (req, res) => {
+    async (req, res, next) => {
       try {
         const { tier, email } = req.body as {
           tier: "pro" | "enterprise";
@@ -337,9 +337,8 @@ export async function registerRoutes(app: Express) {
 
         const session = await createCheckoutSession(tier, email);
         res.json({ url: session.url });
-      } catch (error) {
-        console.error("Checkout error:", error);
-        res.status(500).json({ error: "Failed to create checkout session" });
+      } catch (err) {
+        next(err);
       }
     }
   );

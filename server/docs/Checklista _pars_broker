@@ -1,0 +1,128 @@
+## 2. Parser & Broker – bezpieczeństwo + jakość
+
+### 2.1. Walidacja wejścia (TURA 1 – INPUT)
+
+[ ] P2.1.1 – Normalizacja wejścia:
+  - osobny moduł `server/pipeline/chatInput.ts`
+  - `normalizeChatInput(rawText, source, fileName)`:
+    - `.trim()`
+    - liczy `sizeKb`, `lineCount`
+    - wyrzuca błąd przy pustym tekście
+
+[ ] P2.1.2 – Limity rozmiaru:
+  - max size tekstu (np. 5 MB) – hard limit
+  - jak > limit → HTTP 413 / 400 z jasnym komunikatem
+
+[ ] P2.1.3 – Typ pliku:
+  - `/api/parse-chat` – akceptujemy tylko `.md` / `.txt`
+  - reject dla innych (docx, pdf, bin)
+
+[ ] P2.1.4 – URL/JSON:
+  - `/api/import-chat` – dalej Zod `importChatSchema`
+  - `assertSafeUrl()` – tylko https + allowlista domen
+  - JSON: musi być _prawdziwy JSON_, nie URL w polu `json`
+
+---
+
+### 2.2. Klasyfikacja projektu (TURA 2 – BROKER)
+
+[ ] P2.2.1 – Źródło typu projektu:
+  - `resolveProjectKind(req)`:
+    - sprawdza `x-project-kind`
+    - jeśli brak – patrzy w body `projectKind`
+    - default: `"generic"`
+
+[ ] P2.2.2 – Spec projektu:
+  - moduł `server/broker/index.ts`:
+    - `buildProjectSpec(projectKind, normalizedInput)`
+    - ustawia:
+      - `kind`
+      - `title` (z nazwy pliku lub źródła)
+      - `description`
+      - `techStackGuess[]` (React, TS, FastAPI, itp.)
+      - `riskFlags[]` (np. bardzo duży czat, dziwne patterny)
+
+[ ] P2.2.3 – Logowanie:
+  - log przy starcie parsowania:
+    - `projectId`
+    - `projectKind`
+    - `sizeKb`
+    - `lineCount`
+  - **bez** logowania pełnej treści czatu
+
+---
+
+### 2.3. Parser właściwy (TURA 3 – ENGINE)
+
+[ ] P2.3.1 – Podstawowy parser:
+  - `ChatParser` jako domyślny engine
+  - błędy łapane w `try/catch`
+  - jeśli `files.length === 0` **i** `unrecognizedBlocks.length === 0`:
+    - traktujemy jako błąd („nic nie wykryto”)
+
+[ ] P2.3.2 – Unrecognized:
+  - każdy nierozpoznany blok ma:
+    - `content`
+    - `context`
+    - `lineNumber`
+    - `suggestedType` (Code / Missing Content / Suggestion / Unknown)
+  - zapis do `unrecognizedElements` w storage
+
+[ ] P2.3.3 – Omega / Universal parser:
+  - kod w `UniversalFileParser.ts`
+  - używany przez `parseProject()` **tylko** gdy:
+    - `PINPALL_EXPERIMENTAL_OMEGA=1`
+  - na razie:
+    - **nie** czyta realnego FS (`parseDirectory` wyłączone)
+    - tylko `parseContent()` na plikach już wyciągniętych z czatu
+  - wynik: `treeAscii` / dodatkowe metadane – tylko do logów / dev
+
+[ ] P2.3.4 – Guardy na ilość:
+  - max liczba plików w projekcie (np. 500)
+  - max długość pojedynczego pliku (linie / KB)
+  - jeśli przekroczone – reszta oznaczona jako „przycięta” w `unrecognizedBlocks`
+
+---
+
+### 2.4. Warstwa storage + śmieci
+
+[ ] P2.4.1 – Oczyszczanie ścieżek:
+  - przed `createParsedFile`:
+    - usuwamy `..`, `\`, podwójne slashe
+    - zamieniamy na bezpieczne `src/...`, `server/...`
+
+[ ] P2.4.2 – Brak binarnych śmieci:
+  - jeśli plik wygląda na binarny (dużo znaków spoza UTF-8 / null byte):
+    - nie zapisujemy jako code
+    - trafia do `unrecognizedBlocks` jako „Binary / Unsupported”
+
+[ ] P2.4.3 – „Śmieci z czatu”:
+  - heurystyka:
+    - bloki typu logi konsoli / stacktrace >
+      limitu długości → nie zapisujemy jako normalny plik
+    - idą do `unrecognizedBlocks` z tagiem `Log / Stacktrace`
+
+---
+
+### 2.5. API & odpowiedzi
+
+[ ] P2.5.1 – `/api/parse-chat`:
+  - zawsze zwraca:
+    - `projectId`
+    - `projectKind`
+    - `projectName`
+    - `filesFound`
+    - `unrecognizedCount`
+  - statusy:
+    - `201` – sukces
+    - `400` – walidacja wejścia (z sensownym message)
+    - `500` – inne błędy
+
+[ ] P2.5.2 – `/api/import-chat`:
+  - analogicznie jak wyżej
+  - loguje źródło (`source: url/json`) + domenę (bez pełnego URL)
+
+[ ] P2.5.3 – Healthcheck:
+  - `/api/health`:
+    - `status`, `env`, `time`
+  - używany przez monitoring / docker / uptime check
