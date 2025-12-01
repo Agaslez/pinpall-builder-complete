@@ -1,0 +1,2776 @@
+═══════════════════════════════════════════════
+PINPALL BUILDER - COMPLETE SOURCE CODE BACKUP
+═══════════════════════════════════════════════
+
+Files: 105
+Date: 2025-11-30T02:43:40.154Z
+
+
+════════════════════════════════════════════════════════════
+FILE: package.json
+════════════════════════════════════════════════════════════
+
+{
+  "name": "rest-express",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "NODE_ENV=development tsx server/index.ts",
+    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "start": "NODE_ENV=production node dist/index.js",
+    "check": "tsc",
+    "db:push": "drizzle-kit push"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^7.17.0",
+    "@hookform/resolvers": "^3.10.0",
+    "@jridgewell/trace-mapping": "^0.3.25",
+    "@neondatabase/serverless": "^0.10.4",
+    "@radix-ui/react-accordion": "^1.2.4",
+    "@radix-ui/react-alert-dialog": "^1.1.7",
+    "@radix-ui/react-aspect-ratio": "^1.1.3",
+    "@radix-ui/react-avatar": "^1.1.4",
+    "@radix-ui/react-checkbox": "^1.1.5",
+    "@radix-ui/react-collapsible": "^1.1.4",
+    "@radix-ui/react-context-menu": "^2.2.7",
+    "@radix-ui/react-dialog": "^1.1.7",
+    "@radix-ui/react-dropdown-menu": "^2.1.7",
+    "@radix-ui/react-hover-card": "^1.1.7",
+    "@radix-ui/react-label": "^2.1.3",
+    "@radix-ui/react-menubar": "^1.1.7",
+    "@radix-ui/react-navigation-menu": "^1.2.6",
+    "@radix-ui/react-popover": "^1.1.7",
+    "@radix-ui/react-progress": "^1.1.3",
+    "@radix-ui/react-radio-group": "^1.2.4",
+    "@radix-ui/react-scroll-area": "^1.2.4",
+    "@radix-ui/react-select": "^2.1.7",
+    "@radix-ui/react-separator": "^1.1.3",
+    "@radix-ui/react-slider": "^1.2.4",
+    "@radix-ui/react-slot": "^1.2.0",
+    "@radix-ui/react-switch": "^1.1.4",
+    "@radix-ui/react-tabs": "^1.1.4",
+    "@radix-ui/react-toast": "^1.2.7",
+    "@radix-ui/react-toggle": "^1.1.3",
+    "@radix-ui/react-toggle-group": "^1.1.3",
+    "@radix-ui/react-tooltip": "^1.2.0",
+    "@tanstack/react-query": "^5.60.5",
+    "@types/multer": "^2.0.0",
+    "@uppy/aws-s3": "^4.3.2",
+    "@uppy/core": "^4.5.3",
+    "@uppy/dashboard": "^4.4.3",
+    "@uppy/drag-drop": "^4.2.2",
+    "@uppy/file-input": "^4.2.2",
+    "@uppy/progress-bar": "^4.3.2",
+    "@uppy/react": "^4.5.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "connect-pg-simple": "^10.0.0",
+    "date-fns": "^3.6.0",
+    "drizzle-orm": "^0.39.1",
+    "drizzle-zod": "^0.7.0",
+    "embla-carousel-react": "^8.6.0",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "framer-motion": "^11.13.1",
+    "google-auth-library": "^10.3.0",
+    "input-otp": "^1.4.2",
+    "jszip": "^3.10.1",
+    "lucide-react": "^0.453.0",
+    "memorystore": "^1.6.7",
+    "multer": "^2.0.2",
+    "next-themes": "^0.4.6",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "react": "^18.3.1",
+    "react-day-picker": "^8.10.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.55.0",
+    "react-icons": "^5.4.0",
+    "react-resizable-panels": "^2.1.7",
+    "recharts": "^2.15.2",
+    "stripe": "^20.0.0",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss-animate": "^1.0.7",
+    "tw-animate-css": "^1.2.5",
+    "uuid": "^13.0.0",
+    "vaul": "^1.1.2",
+    "wouter": "^3.3.5",
+    "ws": "^8.18.0",
+    "zod": "^3.24.2",
+    "zod-validation-error": "^3.4.0"
+  },
+  "devDependencies": {
+    "@replit/vite-plugin-cartographer": "^0.3.0",
+    "@replit/vite-plugin-runtime-error-modal": "^0.0.3",
+    "@tailwindcss/typography": "^0.5.15",
+    "@tailwindcss/vite": "^4.1.3",
+    "@types/connect-pg-simple": "^7.0.3",
+    "@types/express": "4.17.21",
+    "@types/express-session": "^1.18.0",
+    "@types/node": "20.16.11",
+    "@types/passport": "^1.0.16",
+    "@types/passport-local": "^1.0.38",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "@types/ws": "^8.5.13",
+    "@vitejs/plugin-react": "^4.3.2",
+    "autoprefixer": "^10.4.20",
+    "drizzle-kit": "^0.30.4",
+    "esbuild": "^0.25.0",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.1",
+    "typescript": "5.6.3",
+    "vite": "^5.4.19"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.8"
+  }
+}
+
+
+════════════════════════════════════════════════════════════
+FILE: tsconfig.json
+════════════════════════════════════════════════════════════
+
+{
+  "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
+  "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
+  "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
+    "noEmit": true,
+    "module": "ESNext",
+    "strict": true,
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "types": ["node", "vite/client"],
+    "paths": {
+      "@/*": ["./client/src/*"],
+      "@shared/*": ["./shared/*"]
+    }
+  }
+}
+
+
+════════════════════════════════════════════════════════════
+FILE: vite.config.ts
+════════════════════════════════════════════════════════════
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    runtimeErrorOverlay(),
+    ...(process.env.NODE_ENV !== "production" &&
+    process.env.REPL_ID !== undefined
+      ? [
+          await import("@replit/vite-plugin-cartographer").then((m) =>
+            m.cartographer(),
+          ),
+        ]
+      : []),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "client", "src"),
+      "@shared": path.resolve(import.meta.dirname, "shared"),
+      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+    },
+  },
+  root: path.resolve(import.meta.dirname, "client"),
+  build: {
+    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    emptyOutDir: true,
+  },
+  server: {
+    fs: {
+      strict: true,
+      deny: ["**/.*"],
+    },
+  },
+});
+
+
+════════════════════════════════════════════════════════════
+FILE: tailwind.config.ts
+════════════════════════════════════════════════════════════
+
+import type { Config } from "tailwindcss";
+
+export default {
+  darkMode: ["class"],
+  content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
+  theme: {
+    extend: {
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
+        },
+        popover: {
+          DEFAULT: "var(--popover)",
+          foreground: "var(--popover-foreground)",
+        },
+        primary: {
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
+        },
+        secondary: {
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
+        },
+        muted: {
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
+        },
+        destructive: {
+          DEFAULT: "var(--destructive)",
+          foreground: "var(--destructive-foreground)",
+        },
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
+        chart: {
+          "1": "var(--chart-1)",
+          "2": "var(--chart-2)",
+          "3": "var(--chart-3)",
+          "4": "var(--chart-4)",
+          "5": "var(--chart-5)",
+        },
+        sidebar: {
+          DEFAULT: "var(--sidebar-background)",
+          foreground: "var(--sidebar-foreground)",
+          primary: "var(--sidebar-primary)",
+          "primary-foreground": "var(--sidebar-primary-foreground)",
+          accent: "var(--sidebar-accent)",
+          "accent-foreground": "var(--sidebar-accent-foreground)",
+          border: "var(--sidebar-border)",
+          ring: "var(--sidebar-ring)",
+        },
+      },
+      fontFamily: {
+        sans: ["var(--font-sans)"],
+        serif: ["var(--font-serif)"],
+        mono: ["var(--font-mono)"],
+      },
+      keyframes: {
+        "accordion-down": {
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
+        },
+        "accordion-up": {
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+} satisfies Config;
+
+
+════════════════════════════════════════════════════════════
+FILE: client/src/App.tsx
+════════════════════════════════════════════════════════════
+
+import { Switch, Route } from "wouter";
+import { queryClient } from "./lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import Landing from "@/pages/landing";
+import Home from "@/pages/home";
+import Settings from "@/pages/settings";
+import TestsPage from "@/pages/tests";
+import NotFound from "@/pages/not-found";
+
+function Router() {
+  return (
+    <Switch>
+      <Route path="/" component={Landing} />
+      <Route path="/app" component={Home} />
+      <Route path="/settings" component={Settings} />
+      <Route path="/tests" component={TestsPage} />
+      <Route component={NotFound} />
+    </Switch>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Router />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;
+
+
+════════════════════════════════════════════════════════════
+FILE: client/src/main.tsx
+════════════════════════════════════════════════════════════
+
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import "./index.css";
+
+createRoot(document.getElementById("root")!).render(<App />);
+
+
+════════════════════════════════════════════════════════════
+FILE: client/src/pages/landing.tsx
+════════════════════════════════════════════════════════════
+
+import { Link } from "wouter";
+
+export default function Landing() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      {/* Header */}
+      <header className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2">
+              <div className="bg-primary text-primary-foreground p-2 rounded-lg">
+                <i className="fas fa-code text-xl"></i>
+              </div>
+              <span className="text-xl font-bold">PINpall</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Link href="/app">
+                <button className="text-foreground hover:text-primary transition-colors">
+                  App
+                </button>
+              </Link>
+              <Link href="/settings">
+                <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
+                  Pricing
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center space-y-8">
+          <div className="space-y-4">
+            <h1 className="text-5xl md:text-6xl font-bold text-foreground">
+              <i className="fas fa-arrows-rotate mr-3 text-primary"></i>Convert AI chat into a{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
+                complete project
+              </span>
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Paste a transcript from ChatGPT, Grok, DeepSeek or Claude.
+              Get a 1:1 project structure with code, folders and a ready ZIP download.
+            </p>
+          </div>
+
+          <div className="flex justify-center gap-4 pt-8">
+            <Link href="/app">
+              <button className="bg-primary text-primary-foreground px-8 py-4 rounded-lg hover:bg-primary/90 transition-colors text-lg font-semibold flex items-center gap-2">
+                <i className="fas fa-rocket"></i>
+                Get Started Now
+              </button>
+            </Link>
+            <button className="border-2 border-primary text-primary px-8 py-4 rounded-lg hover:bg-primary/10 transition-colors text-lg font-semibold flex items-center gap-2">
+              <i className="fas fa-play"></i>
+              Watch Demo
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Problem & Solution */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="space-y-4">
+            <h2 className="text-3xl font-bold flex items-center gap-2"><i className="fas fa-circle-xmark text-destructive"></i>The Problem</h2>
+            <ul className="space-y-3 text-lg text-muted-foreground">
+              <li><i className="fas fa-hourglass-end text-amber-500 mr-2"></i>You spend 2-4 hours copying code from ChatGPT</li>
+              <li><i className="fas fa-folder text-blue-500 mr-2"></i>Manually organizing files in folders</li>
+              <li><i className="fas fa-circle-question text-yellow-500 mr-2"></i>You don't know if all files are there</li>
+              <li><i className="fas fa-triangle-exclamation text-orange-500 mr-2"></i>Code doesn't run without fixes</li>
+              <li><i className="fas fa-face-frown text-red-500 mr-2"></i>Frustrating and error-prone</li>
+            </ul>
+          </div>
+          <div className="space-y-4">
+            <h2 className="text-3xl font-bold flex items-center gap-2"><i className="fas fa-circle-check text-green-500"></i>The Solution</h2>
+            <ul className="space-y-3 text-lg text-muted-foreground">
+              <li><i className="fas fa-bolt text-yellow-500 mr-2"></i>30 seconds - paste, parse, download</li>
+              <li><i className="fas fa-bullseye text-primary mr-2"></i>Automatic folder structure</li>
+              <li><i className="fas fa-magnifying-glass text-blue-500 mr-2"></i>Report of missing files</li>
+              <li><i className="fas fa-check text-green-500 mr-2"></i>Code ready to run</li>
+              <li><i className="fas fa-rocket text-primary mr-2"></i>Save hours per project</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-card/50 rounded-2xl my-12 border border-border">
+        <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
+        <div className="grid md:grid-cols-4 gap-6">
+          {[
+            { num: "1", icon: "fa-copy", title: "Copy Chat", desc: "Export transcript as JSON or paste a link" },
+            { num: "2", icon: "fa-brain", title: "AI Parses", desc: "System analyzes structure and identifies files" },
+            { num: "3", icon: "fa-folder-tree", title: "Build Tree", desc: "Automatically organizes folders and files" },
+            { num: "4", icon: "fa-download", title: "Download ZIP", desc: "Ready project - extract and run" },
+          ].map((step) => (
+            <div key={step.num} className="text-center space-y-3">
+              <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto text-xl font-bold">
+                {step.num}
+              </div>
+              <i className={`fas ${step.icon} text-3xl text-primary`}></i>
+              <h3 className="font-semibold text-lg">{step.title}</h3>
+              <p className="text-sm text-muted-foreground">{step.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 className="text-3xl font-bold text-center mb-12 flex items-center justify-center gap-2"><i className="fas fa-wand-magic-sparkles text-primary"></i>Features</h2>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { icon: "fa-file-code", title: "Multi-format", desc: "Supports: ChatGPT, Grok, DeepSeek, Claude" },
+            { icon: "fa-code-branch", title: "Merge Projects", desc: "Merge multiple chats into one project" },
+            { icon: "fa-search", title: "Tech Detection", desc: "Auto-detects project type (React, Node, Python)" },
+            { icon: "fa-warning", title: "Unrecognized Elements", desc: "Report on code that doesn't fit" },
+            { icon: "fa-edit", title: "Edit Panel", desc: "Edit files directly in the app" },
+            { icon: "fa-api", title: "API Access (Pro)", desc: "Integrate with your app via REST API" },
+          ].map((feature, idx) => (
+            <div key={idx} className="bg-card rounded-lg border border-border p-6 hover:border-primary/50 transition-colors">
+              <i className={`fas ${feature.icon} text-3xl text-primary mb-3`}></i>
+              <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
+              <p className="text-sm text-muted-foreground">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Pricing Preview */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 className="text-3xl font-bold text-center mb-12 flex items-center justify-center gap-2"><i className="fas fa-coins text-primary"></i>Plans</h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            { name: "Free", price: "€0", limit: "5 parses/month", color: "border-border" },
+            { name: "Pro", price: "€29", limit: "500 parses/month + API", color: "border-primary ring-2 ring-primary", recommended: true },
+            { name: "Enterprise", price: "€99", limit: "Unlimited + White-label", color: "border-border" },
+          ].map((plan, idx) => (
+            <div key={idx} className={`border-2 ${plan.color} rounded-lg p-8 text-center space-y-4 ${plan.recommended ? "bg-primary/5" : ""}`}>
+              {plan.recommended && (
+                <div className="text-xs font-semibold text-primary flex items-center justify-center gap-1"><i className="fas fa-star"></i>MOST POPULAR</div>
+              )}
+              <h3 className="text-xl font-bold">{plan.name}</h3>
+              <div className="text-3xl font-bold">{plan.price}</div>
+              <div className="text-sm text-muted-foreground">{plan.limit}</div>
+              <button className={`w-full py-2 rounded-lg transition-colors font-semibold ${
+                plan.recommended 
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : "bg-accent hover:bg-accent/80"
+              }`}>
+                Choose
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Coming Soon */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 className="text-3xl font-bold text-center mb-12 flex items-center justify-center gap-2"><i className="fas fa-wand-magic-sparkles text-primary"></i>Coming Soon</h2>
+        <div className="grid md:grid-cols-2 gap-6">
+          {[
+            { icon: "fa-brain", label: "AI Assistant - help with code that AI didn't generate" },
+            { icon: "fa-box", label: "Package.json auto-fixer - install missing dependencies" },
+            { icon: "fa-link", label: "Multi-chat merge - merge multiple chats into one project" },
+            { icon: "fa-chart-line", label: "Analytics - see what works and what doesn't" },
+            { icon: "fa-floppy-disk", label: "Version History - track all project versions" },
+            { icon: "fa-robot", label: "Smart Suggestions - AI suggests how to fill missing files" },
+          ].map((feature, idx) => (
+            <div key={idx} className="bg-card rounded-lg border border-border/50 p-4 hover:border-primary/50 transition-colors flex items-center gap-3">
+              <i className={`fas ${feature.icon} text-primary text-xl flex-shrink-0`}></i>
+              <span>{feature.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <h2 className="text-4xl font-bold mb-4">Ready to save 10+ hours per project?</h2>
+        <p className="text-xl text-muted-foreground mb-8">
+          Start for free. No credit card, no strings attached.
+        </p>
+        <Link href="/app">
+          <button className="bg-primary text-primary-foreground px-8 py-4 rounded-lg hover:bg-primary/90 transition-colors text-lg font-semibold flex items-center justify-center gap-2">
+            <i className="fas fa-rocket"></i>
+            Launch Now
+          </button>
+        </Link>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-muted-foreground">
+          <p>© 2024 PINpall - Convert AI chats to projects. Fast. Easy. Now.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+
+════════════════════════════════════════════════════════════
+FILE: client/src/pages/home.tsx
+════════════════════════════════════════════════════════════
+
+import { useState } from "react";
+import { Link } from "wouter";
+import { FileUpload } from "@/components/FileUpload";
+import { ParsingStatus } from "@/components/ParsingStatus";
+import { ProjectStructure } from "@/components/ProjectStructure";
+import { UnrecognizedElements } from "@/components/UnrecognizedElements";
+import { EditPanel } from "@/components/EditPanel";
+import { GenerationControls } from "@/components/GenerationControls";
+import { useQuery } from "@tanstack/react-query";
+import type { ParsedProject } from "@shared/schema";
+
+export default function Home() {
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
+  const [parseProgress, setParseProgress] = useState<{
+    currentStep: number;
+    totalSteps: number;
+    stepName: string;
+    status: 'idle' | 'parsing' | 'completed' | 'error';
+  }>({
+    currentStep: 0,
+    totalSteps: 4,
+    stepName: 'Waiting for file...',
+    status: 'idle',
+  });
+
+  const { data: projectData, refetch } = useQuery<ParsedProject & { fileTypeStats: Record<string, number> }>({
+    queryKey: ['/api/projects', currentProjectId],
+    enabled: !!currentProjectId,
+  });
+
+  const handleParseComplete = (projectId: string) => {
+    setCurrentProjectId(projectId);
+    setParseProgress({
+      currentStep: 4,
+      totalSteps: 4,
+      stepName: 'Parsing completed',
+      status: 'completed' as const,
+    });
+    refetch();
+  };
+
+  const handleParseProgress = (step: number, stepName: string, status: 'idle' | 'parsing' | 'completed' | 'error') => {
+    setParseProgress({
+      currentStep: step,
+      totalSteps: 4,
+      stepName,
+      status: status as 'idle' | 'parsing' | 'completed' | 'error',
+    });
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
+      {/* Header */}
+      <header className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link href="/">
+              <div className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
+                <div className="bg-primary text-primary-foreground p-2 rounded-lg">
+                  <i className="fas fa-wand-magic-sparkles text-xl"></i>
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold text-foreground">PINpall</h1>
+                  <p className="text-xs text-muted-foreground">Builder</p>
+                </div>
+              </div>
+            </Link>
+            <div className="flex items-center space-x-3">
+              <Link href="/settings">
+                <button 
+                  className="bg-secondary text-secondary-foreground px-4 py-2 rounded-md hover:bg-secondary/80 transition-colors flex items-center gap-2"
+                >
+                  <i className="fas fa-credit-card"></i>
+                  Plans
+                </button>
+              </Link>
+              <button 
+                className="border border-primary/50 text-foreground px-4 py-2 rounded-md hover:bg-primary/10 transition-colors flex items-center gap-2"
+              >
+                <i className="fas fa-circle-question"></i>
+                Help
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left Column - File Upload & Parser */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            <FileUpload 
+              onParseComplete={handleParseComplete}
+              onParseProgress={handleParseProgress}
+            />
+
+            <ParsingStatus 
+              progress={parseProgress}
+            />
+
+            {projectData && (
+              <>
+                <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 shadow-lg overflow-hidden">
+                  <div className="p-6">
+                    <h3 className="text-lg font-semibold mb-6 flex items-center" data-testid="parsing-results-title">
+                      <i className="fas fa-chart-pie mr-3 text-primary text-xl"></i>
+                      Results
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                      <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-lg p-4 text-center hover:border-primary/50 transition-colors">
+                        <div className="text-3xl font-bold text-primary" data-testid="stats-files-found">
+                          {projectData.files.length}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-2 flex items-center justify-center gap-1">
+                          <i className="fas fa-file-code"></i>
+                          Files Found
+                        </div>
+                      </div>
+                      <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-lg p-4 text-center hover:border-green-500/50 transition-colors">
+                        <div className="text-3xl font-bold text-green-600" data-testid="stats-code-blocks">
+                          {projectData.files.filter(f => f.content.trim()).length}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-2 flex items-center justify-center gap-1">
+                          <i className="fas fa-code"></i>
+                          Code Blocks
+                        </div>
+                      </div>
+                      <div className="bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 rounded-lg p-4 text-center hover:border-amber-500/50 transition-colors">
+                        <div className="text-3xl font-bold text-amber-600" data-testid="stats-unrecognized">
+                          {projectData.unrecognizedElements.length}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-2 flex items-center justify-center gap-1">
+                          <i className="fas fa-circle-exclamation"></i>
+                          Issues
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 pt-4 border-t border-border/50">
+                      <h4 className="font-medium text-foreground flex items-center gap-2">
+                        <i className="fas fa-tag text-primary"></i>
+                        File Types
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {Object.entries(projectData.fileTypeStats).map(([ext, count]) => (
+                          <span 
+                            key={ext}
+                            className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm border border-primary/20 hover:border-primary/50 transition-colors"
+                            data-testid={`file-type-${ext}`}
+                          >
+                            <i className="fas fa-circle text-xs mr-1"></i>
+                            .{ext} ({count})
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <EditPanel 
+                  files={projectData.files}
+                  onFileUpdate={refetch}
+                />
+
+                <GenerationControls 
+                  project={projectData.project}
+                />
+              </>
+            )}
+          </div>
+
+          {/* Right Column - Project Structure & Reports */}
+          <div className="space-y-6">
+            
+            <ProjectStructure 
+              files={projectData?.files || []}
+              projectName={projectData?.project.name || ''}
+            />
+
+            <UnrecognizedElements 
+              elements={projectData?.unrecognizedElements || []}
+              onElementUpdate={refetch}
+            />
+
+            {/* Quick Actions */}
+            <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 shadow-lg overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <i className="fas fa-bolt mr-2 text-primary text-xl"></i>
+                  Actions
+                </h3>
+                
+                <div className="space-y-3">
+                  <button 
+                    className="w-full bg-primary/5 hover:bg-primary/10 border border-primary/20 hover:border-primary/50 text-foreground p-3 rounded-md text-left transition-colors group"
+                    data-testid="button-load-example"
+                  >
+                    <div className="flex items-center">
+                      <i className="fas fa-download mr-3 text-primary group-hover:scale-110 transition-transform"></i>
+                      <div>
+                        <div className="font-medium text-sm">Load Example</div>
+                        <div className="text-xs text-muted-foreground">Sample transcript</div>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  <button 
+                    className="w-full bg-primary/5 hover:bg-primary/10 border border-primary/20 hover:border-primary/50 text-foreground p-3 rounded-md text-left transition-colors group"
+                    data-testid="button-project-history"
+                  >
+                    <div className="flex items-center">
+                      <i className="fas fa-history mr-3 text-primary group-hover:scale-110 transition-transform"></i>
+                      <div>
+                        <div className="font-medium text-sm">History</div>
+                        <div className="text-xs text-muted-foreground">Previous projects</div>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  <button 
+                    className="w-full bg-primary/5 hover:bg-primary/10 border border-primary/20 hover:border-primary/50 text-foreground p-3 rounded-md text-left transition-colors group"
+                    data-testid="button-parser-config"
+                  >
+                    <div className="flex items-center">
+                      <i className="fas fa-sliders mr-3 text-primary group-hover:scale-110 transition-transform"></i>
+                      <div>
+                        <div className="font-medium text-sm">Config</div>
+                        <div className="text-xs text-muted-foreground">Parser settings</div>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border/50 backdrop-blur-sm mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex justify-between items-center text-sm text-muted-foreground">
+            <div className="flex items-center space-x-4">
+              <span data-testid="footer-copyright">© 2024 PINpall</span>
+              <span data-testid="footer-version">v1.0.0</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button className="hover:text-primary transition-colors" data-testid="footer-docs">Docs</button>
+              <button className="hover:text-primary transition-colors" data-testid="footer-support">Support</button>
+              <button className="hover:text-primary transition-colors" data-testid="footer-github">GitHub</button>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+
+════════════════════════════════════════════════════════════
+FILE: client/src/pages/tests.tsx
+════════════════════════════════════════════════════════════
+
+import { useEffect, useState } from "react";
+import { ClientChatParser } from "@/lib/chatParser";
+
+interface TestResult {
+  name: string;
+  passed: boolean;
+  duration: number;
+  details?: string;
+  error?: string;
+}
+
+export default function TestsPage() {
+  const [results, setResults] = useState<TestResult[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    runTests();
+  }, []);
+
+  const runTests = async () => {
+    const testResults: TestResult[] = [];
+
+    // Test 1: React Component Parsing
+    const start1 = performance.now();
+    try {
+      const chat1 = `
+## Project Structure
+src/components/Button.tsx
+src/components/Card.tsx
+src/pages/Home.tsx
+
+\`\`\`typescript
+export const Button = () => <button>Click</button>;
+\`\`\`
+
+\`\`\`typescript
+export const Card = () => <div>Card</div>;
+\`\`\`
+
+\`\`\`typescript
+export default function Home() {
+  return <div>Home</div>;
+}
+\`\`\`
+      `;
+      const parser1 = new ClientChatParser(chat1);
+      const result1 = parser1.parse();
+      testResults.push({
+        name: "✅ Test 1: React Component Parsing",
+        passed: result1.files.length >= 3,
+        duration: performance.now() - start1,
+        details: `Found ${result1.files.length} files: ${result1.files.map(f => f.path.split('/').pop()).join(', ')}`
+      });
+    } catch (error) {
+      testResults.push({
+        name: "❌ Test 1: React Component Parsing",
+        passed: false,
+        duration: performance.now() - start1,
+        error: String(error)
+      });
+    }
+
+    // Test 2: Multi-language Detection
+    const start2 = performance.now();
+    try {
+      const chat2 = `
+\`\`\`typescript
+export const App = () => <div />;
+\`\`\`
+
+\`\`\`javascript
+const config = { test: true };
+\`\`\`
+
+\`\`\`json
+{ "name": "app", "version": "1.0.0" }
+\`\`\`
+
+\`\`\`python
+def hello(): print("hello")
+\`\`\`
+
+\`\`\`sql
+SELECT * FROM users;
+\`\`\`
+      `;
+      const parser2 = new ClientChatParser(chat2);
+      const result2 = parser2.parse();
+      const languages = result2.files.map(f => f.language).filter(Boolean);
+      testResults.push({
+        name: "✅ Test 2: Multi-language Detection",
+        passed: result2.files.length >= 4,
+        duration: performance.now() - start2,
+        details: `Detected ${languages.length} files with languages: ${languages.join(', ')}`
+      });
+    } catch (error) {
+      testResults.push({
+        name: "❌ Test 2: Multi-language Detection",
+        passed: false,
+        duration: performance.now() - start2,
+        error: String(error)
+      });
+    }
+
+    // Test 3: Folder Structure Recognition
+    const start3 = performance.now();
+    try {
+      const chat3 = `
+\`\`\`typescript
+// src/pages/index.tsx
+export default function Home() {}
+\`\`\`
+
+\`\`\`typescript
+// src/components/header.tsx
+export const Header = () => <header/>;
+\`\`\`
+
+\`\`\`typescript
+// src/hooks/useData.ts
+export const useData = () => ({});
+\`\`\`
+
+\`\`\`javascript
+// config/next.config.js
+module.exports = {};
+\`\`\`
+      `;
+      const parser3 = new ClientChatParser(chat3);
+      const result3 = parser3.parse();
+      const srcFiles = result3.files.filter(f => f.path.includes('src/'));
+      testResults.push({
+        name: "✅ Test 3: Folder Structure Recognition",
+        passed: srcFiles.length >= 3,
+        duration: performance.now() - start3,
+        details: `Found ${result3.files.length} total files, ${srcFiles.length} in src/`
+      });
+    } catch (error) {
+      testResults.push({
+        name: "❌ Test 3: Folder Structure Recognition",
+        passed: false,
+        duration: performance.now() - start3,
+        error: String(error)
+      });
+    }
+
+    // Test 4: Unrecognized Elements Detection
+    const start4 = performance.now();
+    try {
+      const chat4 = `
+## Expected Files
+src/index.ts
+src/utils.ts
+
+\`\`\`typescript
+// src/index.ts
+export const main = () => {};
+\`\`\`
+
+\`\`\`typescript
+// Orphaned code block with no file reference
+const orphanedFunction = () => {
+  console.log("I don't have a home!");
+};
+\`\`\`
+      `;
+      const parser4 = new ClientChatParser(chat4);
+      const result4 = parser4.parse();
+      testResults.push({
+        name: "✅ Test 4: Unrecognized Elements Detection",
+        passed: result4.unrecognizedBlocks.length > 0,
+        duration: performance.now() - start4,
+        details: `Detected ${result4.unrecognizedBlocks.length} unrecognized elements`
+      });
+    } catch (error) {
+      testResults.push({
+        name: "❌ Test 4: Unrecognized Elements Detection",
+        passed: false,
+        duration: performance.now() - start4,
+        error: String(error)
+      });
+    }
+
+    // Test 5: Real-world Next.js Project
+    const start5 = performance.now();
+    try {
+      const chat5 = `
+## Next.js Project
+
+### pages/index.tsx
+\`\`\`typescript
+import Head from 'next/head';
+
+export default function Home() {
+  return (
+    <>
+      <Head><title>Welcome</title></Head>
+      <main><h1>Hello</h1></main>
+    </>
+  );
+}
+\`\`\`
+
+### pages/api/users.ts
+\`\`\`typescript
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.status(200).json({ users: [] });
+}
+\`\`\`
+
+### next.config.js
+\`\`\`javascript
+module.exports = { reactStrictMode: true };
+\`\`\`
+
+### package.json
+\`\`\`json
+{
+  "name": "nextjs-app",
+  "scripts": { "dev": "next dev" },
+  "dependencies": { "next": "^13.0.0" }
+}
+\`\`\`
+
+### tailwind.config.js
+\`\`\`javascript
+module.exports = { content: ['./pages/**/*.{js,ts,jsx,tsx}'] };
+\`\`\`
+
+### styles/globals.css
+\`\`\`css
+html, body { margin: 0; padding: 0; }
+\`\`\`
+      `;
+      const parser5 = new ClientChatParser(chat5);
+      const result5 = parser5.parse();
+      const hasPages = result5.files.some(f => f.path.includes('pages/'));
+      const hasApi = result5.files.some(f => f.path.includes('api/'));
+      const hasConfig = result5.files.some(f => f.path.includes('next.config') || f.path.includes('package.json'));
+      testResults.push({
+        name: "✅ Test 5: Real-world Next.js Project",
+        passed: hasPages && hasApi && hasConfig,
+        duration: performance.now() - start5,
+        details: `Found ${result5.files.length} files. Pages: ${hasPages ? '✓' : '✗'}, API: ${hasApi ? '✓' : '✗'}, Config: ${hasConfig ? '✓' : '✗'}`
+      });
+    } catch (error) {
+      testResults.push({
+        name: "❌ Test 5: Real-world Next.js Project",
+        passed: false,
+        duration: performance.now() - start5,
+        error: String(error)
+      });
+    }
+
+    // Test 6: Large Content Handling
+    const start6 = performance.now();
+    try {
+      const largeCode = 'const data = [' + Array(1000).fill('{ id: 1, name: "test" }').join(',') + ']';
+      const chat6 = `\`\`\`javascript\n${largeCode}\n\`\`\``;
+      const parser6 = new ClientChatParser(chat6);
+      const result6 = parser6.parse();
+      testResults.push({
+        name: "✅ Test 6: Large Content Handling",
+        passed: result6.files.length > 0,
+        duration: performance.now() - start6,
+        details: `Parsed ${(chat6.length / 1024).toFixed(2)}KB in ${(performance.now() - start6).toFixed(2)}ms`
+      });
+    } catch (error) {
+      testResults.push({
+        name: "❌ Test 6: Large Content Handling",
+        passed: false,
+        duration: performance.now() - start6,
+        error: String(error)
+      });
+    }
+
+    // Test 7: File Type Stats
+    const start7 = performance.now();
+    try {
+      const chat7 = `
+\`\`\`typescript
+export const Button = () => <button/>;
+\`\`\`
+
+\`\`\`typescript
+export const Modal = () => <div/>;
+\`\`\`
+
+\`\`\`javascript
+const config = {};
+\`\`\`
+
+\`\`\`json
+{ "test": true }
+\`\`\`
+      `;
+      const parser7 = new ClientChatParser(chat7);
+      const result7 = parser7.parse();
+      testResults.push({
+        name: "✅ Test 7: File Statistics Calculation",
+        passed: result7.files.length === 4,
+        duration: performance.now() - start7,
+        details: `Total files: ${result7.files.length}, with proper language detection`
+      });
+    } catch (error) {
+      testResults.push({
+        name: "❌ Test 7: File Statistics Calculation",
+        passed: false,
+        duration: performance.now() - start7,
+        error: String(error)
+      });
+    }
+
+    // Test 8: Edge Cases
+    const start8 = performance.now();
+    try {
+      const chat8 = `
+\`\`\`typescript
+\`\`\`
+
+\`\`\`javascript
+const valid = true;
+\`\`\`
+
+\`\`\`
+\`\`\`
+      `;
+      const parser8 = new ClientChatParser(chat8);
+      const result8 = parser8.parse();
+      const hasValidContent = result8.files.some(f => f.content.length > 5);
+      testResults.push({
+        name: "✅ Test 8: Edge Case - Empty/Invalid Blocks",
+        passed: hasValidContent,
+        duration: performance.now() - start8,
+        details: `Handled ${result8.files.length} files with edge cases correctly`
+      });
+    } catch (error) {
+      testResults.push({
+        name: "❌ Test 8: Edge Case - Empty/Invalid Blocks",
+        passed: false,
+        duration: performance.now() - start8,
+        error: String(error)
+      });
+    }
+
+    setResults(testResults);
+    setLoading(false);
+  };
+
+  const passed = results.filter(r => r.passed).length;
+  const total = results.length;
+  const passRate = total > 0 ? ((passed / total) * 100).toFixed(1) : 0;
+  const totalTime = results.reduce((sum, r) => sum + r.duration, 0).toFixed(2);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      {/* Header */}
+      <header className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-3">
+              <div className="bg-primary text-primary-foreground p-2 rounded-lg">
+                <i className="fas fa-flask text-xl"></i>
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-foreground">Test Suite</h1>
+                <p className="text-xs text-muted-foreground">Hybrid Parser Tests</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {loading ? (
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 shadow-lg p-12 text-center">
+            <i className="fas fa-spinner fa-spin text-4xl text-primary mb-4"></i>
+            <p className="text-lg text-muted-foreground">Running tests...</p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Summary */}
+            <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-lg p-8 text-center">
+              <h2 className="text-3xl font-bold mb-2">
+                {passed}/{total} Tests Passed
+              </h2>
+              <p className="text-2xl text-green-600 font-semibold mb-2">
+                {passRate}% Success Rate
+              </p>
+              <p className="text-muted-foreground">
+                Total execution time: <span className="font-mono text-primary">{totalTime}ms</span>
+              </p>
+            </div>
+
+            {/* Results */}
+            <div className="space-y-4">
+              {results.map((result, idx) => (
+                <div
+                  key={idx}
+                  className={`rounded-lg border p-6 ${
+                    result.passed
+                      ? 'bg-green-500/5 border-green-500/20 hover:border-green-500/50'
+                      : 'bg-red-500/5 border-red-500/20 hover:border-red-500/50'
+                  } transition-colors`}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-lg font-semibold text-foreground">
+                      {result.name}
+                    </h3>
+                    <span className={`text-xs font-mono px-2 py-1 rounded ${
+                      result.passed
+                        ? 'bg-green-500/20 text-green-600'
+                        : 'bg-red-500/20 text-red-600'
+                    }`}>
+                      {result.duration.toFixed(2)}ms
+                    </span>
+                  </div>
+                  {result.details && (
+                    <p className="text-sm text-muted-foreground mb-2">{result.details}</p>
+                  )}
+                  {result.error && (
+                    <p className="text-sm text-red-600 font-mono">{result.error}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Button to rerun */}
+            <div className="text-center">
+              <button
+                onClick={() => {
+                  setLoading(true);
+                  runTests();
+                }}
+                className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors inline-flex items-center gap-2"
+              >
+                <i className="fas fa-redo"></i>
+                Run Tests Again
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+
+════════════════════════════════════════════════════════════
+FILE: client/src/pages/settings.tsx
+════════════════════════════════════════════════════════════
+
+import { Link } from "wouter";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+
+export default function Settings() {
+  const [selectedTier, setSelectedTier] = useState<'free' | 'pro' | 'enterprise'>('free');
+  const [email, setEmail] = useState('user@example.com');
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const { toast } = useToast();
+
+  const handleCheckout = async (tier: 'pro' | 'enterprise') => {
+    setIsCheckingOut(true);
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier, email }),
+      });
+
+      if (!response.ok) throw new Error('Checkout failed');
+      const data = await response.json();
+      
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to proceed to checkout',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
+
+  const pricingTiers = [
+    {
+      id: 'free',
+      name: 'Free',
+      price: '€0',
+      period: '/month',
+      description: 'Perfect for testing',
+      features: [
+        '✅ 5 parses/month',
+        '✅ File parsing (.md, .txt)',
+        '❌ URL import',
+        '❌ Multi-chat merge',
+        '❌ Priority support',
+      ],
+      cta: 'Currently Using',
+      color: 'bg-gray-100 text-gray-900',
+      icon: 'fa-star'
+    },
+    {
+      id: 'pro',
+      name: 'Pro',
+      price: '€29',
+      period: '/month',
+      description: 'For professional developers',
+      features: [
+        '✅ 500 parses/month',
+        '✅ File parsing (.md, .txt)',
+        '✅ URL import (ChatGPT, Grok, DeepSeek, Claude)',
+        '✅ Multi-chat merge with auto tech detection',
+        '✅ Priority support',
+        '✅ API access',
+      ],
+      cta: 'Upgrade to Pro',
+      color: 'bg-primary text-primary-foreground',
+      recommended: true,
+      icon: 'fa-rocket'
+    },
+    {
+      id: 'enterprise',
+      name: 'Enterprise',
+      price: '€99',
+      period: '/month',
+      description: 'For agencies and companies',
+      features: [
+        '✅ Unlimited parses',
+        '✅ File parsing (.md, .txt)',
+        '✅ URL import (all sources)',
+        '✅ Multi-chat merge + Advanced Analytics',
+        '✅ 24/7 dedicated support',
+        '✅ Full API + webhooks',
+        '✅ White-label solution',
+        '✅ Custom integrations',
+      ],
+      cta: 'Contact - Enterprise',
+      color: 'bg-amber-100 text-amber-900',
+      icon: 'fa-crown'
+    },
+  ];
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
+      {/* Header */}
+      <header className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link href="/app" className="hover:opacity-80 transition-opacity">
+              <div className="flex items-center space-x-3 cursor-pointer">
+                <div className="bg-primary text-primary-foreground p-2 rounded-lg">
+                  <i className="fas fa-arrow-left text-xl"></i>
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold text-foreground">Pricing Plans</h1>
+                  <p className="text-xs text-muted-foreground">Choose your plan</p>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Settings Panel */}
+          <div className="space-y-6">
+            <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 shadow-lg p-6">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i className="fas fa-user-circle text-primary text-xl"></i>
+                Profile
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium block mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3 py-2 border border-border/50 rounded-md bg-background text-foreground focus:border-primary/50 outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium block mb-2">Current Plan</label>
+                  <div className="px-3 py-2 border border-border/50 rounded-md bg-accent/50 text-foreground flex items-center gap-2">
+                    <i className="fas fa-badge-check text-green-500"></i>
+                    Free
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 shadow-lg p-6">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i className="fas fa-chart-line text-primary text-xl"></i>
+                Usage
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">Parses this month</span>
+                    <span className="text-sm text-muted-foreground font-semibold">2 / 5</span>
+                  </div>
+                  <div className="w-full bg-border/30 rounded-full h-2 overflow-hidden">
+                    <div className="bg-gradient-to-r from-primary to-blue-600 h-2 rounded-full" style={{ width: '40%' }}></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">Multi-chat merges</span>
+                    <span className="text-sm text-muted-foreground font-semibold">0 / ∞</span>
+                  </div>
+                  <div className="p-3 bg-primary/5 border border-primary/20 rounded-md text-sm text-muted-foreground flex items-center gap-2">
+                    <i className="fas fa-lock text-primary"></i>
+                    Available in Pro plan
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 shadow-lg p-6">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i className="fas fa-key text-primary text-xl"></i>
+                API Key
+              </h2>
+              <div className="space-y-3">
+                <input
+                  type="password"
+                  value="pinpall_sk_1234567890"
+                  disabled
+                  className="w-full px-3 py-2 border border-border/50 rounded-md bg-background text-foreground font-mono text-sm"
+                />
+                <button className="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+                  <i className="fas fa-copy"></i>
+                  Copy Key
+                </button>
+                <button className="w-full bg-destructive/10 text-destructive px-4 py-2 rounded-md hover:bg-destructive/20 transition-colors flex items-center justify-center gap-2">
+                  <i className="fas fa-rotate-right"></i>
+                  Regenerate
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Pricing Plans */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <i className="fas fa-credit-card text-primary"></i>
+              Choose Your Plan
+            </h2>
+            <div className="space-y-4">
+              {pricingTiers.map((tier) => (
+                <div
+                  key={tier.id}
+                  className={`rounded-lg border-2 p-6 cursor-pointer transition-all hover:shadow-lg ${
+                    selectedTier === tier.id
+                      ? 'border-primary bg-primary/5'
+                      : 'border-border/50 hover:border-primary/50 bg-card/50 backdrop-blur-sm'
+                  } ${tier.recommended ? 'ring-2 ring-primary' : ''}`}
+                  onClick={() => setSelectedTier(tier.id as any)}
+                >
+                  {tier.recommended && (
+                    <div className="inline-flex items-center gap-1 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-medium mb-3">
+                      <i className="fas fa-fire"></i>
+                      Most Popular
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <i className={`fas ${tier.icon} text-2xl text-primary`}></i>
+                        <h3 className="text-lg font-semibold">{tier.name}</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{tier.description}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-3xl font-bold">{tier.price}</div>
+                      <div className="text-xs text-muted-foreground">{tier.period}</div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 mb-4 pt-4 border-t border-border/30">
+                    {tier.features.map((feature, idx) => (
+                      <div key={idx} className="text-sm text-foreground flex items-center gap-2">
+                        <i className={`fas ${feature.includes('✅') ? 'fa-check text-green-600' : 'fa-times text-muted-foreground'} text-xs`}></i>
+                        {feature.replace('✅', '').replace('❌', '').trim()}
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    className={`w-full px-4 py-2 rounded-md transition-colors font-semibold flex items-center justify-center gap-2 ${
+                      tier.id === 'free'
+                        ? 'bg-gray-300 text-gray-800 cursor-default'
+                        : tier.recommended
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                    } disabled:opacity-50`}
+                    disabled={tier.id === 'free' || isCheckingOut}
+                    onClick={() => handleCheckout(tier.id as 'pro' | 'enterprise')}
+                  >
+                    {isCheckingOut ? (
+                      <>
+                        <i className="fas fa-spinner fa-spin"></i>
+                        Processing...
+                      </>
+                    ) : tier.id === 'free' ? (
+                      <>
+                        <i className="fas fa-check"></i>
+                        {tier.cta}
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-arrow-right"></i>
+                        {tier.cta}
+                      </>
+                    )}
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-gradient-to-r from-primary/10 to-blue-600/10 border border-primary/20 rounded-lg p-4 text-sm">
+              <p className="font-medium mb-2 flex items-center gap-2">
+                <i className="fas fa-lightbulb text-primary"></i>
+                Need something custom?
+              </p>
+              <p className="text-muted-foreground mb-3">
+                Contact our sales team to discuss custom solutions for your organization.
+              </p>
+              <button className="text-primary font-medium hover:underline flex items-center gap-1">
+                <i className="fas fa-envelope"></i>
+                Send us a message →
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border/50 backdrop-blur-sm mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex justify-between items-center text-sm text-muted-foreground">
+            <span>© 2024 PINpall - Builder</span>
+            <Link href="/app" className="hover:text-primary transition-colors flex items-center gap-1">
+              <i className="fas fa-arrow-left"></i>
+              Back to App
+            </Link>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+
+════════════════════════════════════════════════════════════
+FILE: client/src/components/FileUpload.tsx
+════════════════════════════════════════════════════════════
+
+import { useState, useRef } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { ClientChatParser } from "@/lib/chatParser";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { ParsedProject } from "@shared/schema";
+
+interface FileUploadProps {
+  onParseComplete: (projectId: string) => void;
+  onParseProgress: (step: number, stepName: string, status: 'idle' | 'parsing' | 'completed' | 'error') => void;
+}
+
+export function FileUpload({ onParseComplete, onParseProgress }: FileUploadProps) {
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [urlInput, setUrlInput] = useState('');
+  const [jsonText, setJsonText] = useState('');
+  const [sourceType, setSourceType] = useState<'chatgpt' | 'grok' | 'deepseek' | 'claude'>('grok');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  const handleFileSelect = (file: File) => {
+    const allowedExtensions = ['.md', '.txt'];
+    const isValidType = allowedExtensions.some(ext => 
+      file.name.toLowerCase().endsWith(ext)
+    );
+
+    if (!isValidType) {
+      toast({
+        title: "Invalid file type",
+        description: "Only .md and .txt files are supported",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Maximum file size is 10MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploadedFile(file);
+  };
+
+  const queryClient = useQueryClient();
+
+  const handleUploadFile = async () => {
+    if (!uploadedFile) return;
+
+    setIsUploading(true);
+    onParseProgress(1, 'Loading file...', 'parsing');
+
+    try {
+      const fileSize = uploadedFile.size;
+      const fileName = uploadedFile.name.replace(/\.[^/.]+$/, "");
+      const isSmallFile = fileSize < 5 * 1024 * 1024; // 5MB threshold
+
+      if (isSmallFile) {
+        // CLIENT-SIDE PARSING (works 100% offline!)
+        onParseProgress(2, 'Parsing locally in browser...', 'parsing');
+        
+        const fileContent = await uploadedFile.text();
+        const parser = new ClientChatParser(fileContent);
+        const parsed = parser.parse();
+
+        onParseProgress(3, 'Building project structure...', 'parsing');
+
+        // Create project data locally
+        const projectId = Math.random().toString(36).substr(2, 9);
+        const fileTypeStats: Record<string, number> = {};
+
+        const projectData: ParsedProject & { fileTypeStats: Record<string, number> } = {
+          project: {
+            id: projectId,
+            name: fileName,
+            originalFileName: uploadedFile.name,
+            fileSize: fileSize,
+            parseStatus: 'completed',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+          files: parsed.files.map(f => {
+            const ext = f.path.split('.').pop() || 'unknown';
+            fileTypeStats[ext] = (fileTypeStats[ext] || 0) + 1;
+            return {
+              id: Math.random().toString(36).substr(2, 9),
+              projectId: projectId,
+              filePath: f.path,
+              content: f.content,
+              fileType: f.type,
+              language: f.language || null,
+              lineCount: f.content.split('\n').length,
+              isGenerated: true,
+            };
+          }),
+          unrecognizedElements: parsed.unrecognizedBlocks.map(ub => ({
+            id: Math.random().toString(36).substr(2, 9),
+            projectId: projectId,
+            content: ub.content,
+            context: ub.context || null,
+            lineNumber: ub.lineNumber || null,
+            suggestedType: ub.suggestedType || null,
+            resolved: false,
+          })),
+          fileTypeStats: fileTypeStats
+        };
+
+        // Store in cache
+        queryClient.setQueryData(['/api/projects', projectId], projectData);
+
+        onParseProgress(4, 'Done! (Offline parsing)', 'completed');
+        
+        setTimeout(() => {
+          onParseComplete(projectId);
+          toast({
+            title: "✅ Parsing completed (offline)",
+            description: `Found ${parsed.files.length} files offline in your browser!`,
+          });
+        }, 500);
+      } else {
+        // SERVER-SIDE PARSING (for large files)
+        onParseProgress(2, 'Uploading to server...', 'parsing');
+        
+        const formData = new FormData();
+        formData.append('chatFile', uploadedFile);
+        formData.append('projectName', fileName);
+
+        const response = await fetch('/api/parse-chat', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Upload error');
+        }
+
+        const result = await response.json();
+        onParseProgress(3, 'Parsing on server...', 'parsing');
+        
+        setTimeout(() => {
+          onParseProgress(4, 'Done! (Server parsing)', 'completed');
+          setTimeout(() => {
+            onParseComplete(result.projectId);
+            toast({
+              title: "✅ Parsing completed (server)",
+              description: `Found ${result.filesFound} files using server parser`,
+            });
+          }, 500);
+        }, 1000);
+      }
+    } catch (error) {
+      onParseProgress(0, 'Parsing error', 'error');
+      toast({
+        title: "❌ Parsing error",
+        description: error instanceof Error ? error.message : "Failed to process file",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleImportURL = async () => {
+    if (!urlInput.trim()) {
+      toast({
+        title: "Error",
+        description: "Please paste a chat URL",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    onParseProgress(1, 'Downloading chat from link...', 'parsing');
+
+    try {
+      onParseProgress(2, 'Parsing project structure...', 'parsing');
+      
+      const response = await fetch('/api/import-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: urlInput,
+          source: sourceType,
+        }),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Import failed');
+      }
+
+      const result = await response.json();
+
+      onParseProgress(3, 'Validating completeness...', 'parsing');
+      
+      setTimeout(() => {
+        onParseProgress(4, 'Done!', 'completed');
+        setTimeout(() => {
+          onParseComplete(result.projectId);
+          toast({
+            title: "✅ Import completed",
+            description: `Found ${result.filesFound} files from chat`,
+          });
+          setUrlInput('');
+        }, 500);
+      }, 1000);
+
+    } catch (error) {
+      onParseProgress(0, 'Import error', 'error');
+      toast({
+        title: "❌ Error",
+        description: error instanceof Error ? error.message : "Failed to import chat",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setUploadedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  return (
+    <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 shadow-lg">
+      <div className="p-6">
+        <h2 className="text-lg font-semibold mb-4 flex items-center" data-testid="upload-title">
+          <i className="fas fa-arrow-up-from-bracket mr-3 text-primary text-xl"></i>
+          Upload Chat Transcript
+        </h2>
+        
+        <Tabs defaultValue="file" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="file" className="flex items-center gap-2">
+              <i className="fas fa-file"></i>
+              From File
+            </TabsTrigger>
+            <TabsTrigger value="url" className="flex items-center gap-2">
+              <i className="fas fa-link"></i>
+              From Link/JSON
+            </TabsTrigger>
+          </TabsList>
+
+          {/* TAB 1: FILE */}
+          <TabsContent value="file" className="space-y-4">
+            {!uploadedFile ? (
+              <div 
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-all cursor-pointer ${
+                  isDragOver 
+                    ? 'border-primary bg-primary/10' 
+                    : 'border-border/50 hover:border-primary hover:bg-primary/5'
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                data-testid="drop-zone"
+              >
+                <div className="space-y-4">
+                  <div className="text-5xl text-primary">
+                    <i className="fas fa-cloud-arrow-up"></i>
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-foreground">
+                      Drop your chat file here
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1 flex items-center justify-center gap-1">
+                      <i className="fas fa-mouse"></i>
+                      or click to browse
+                    </p>
+                  </div>
+                  <div className="text-xs text-muted-foreground border-t border-border/50 pt-4 mt-4">
+                    <span className="bg-primary/10 text-primary px-2 py-1 rounded inline-block">
+                      <i className="fas fa-info-circle mr-1"></i>
+                      .md, .txt files (max 10MB)
+                    </span>
+                  </div>
+                </div>
+                <input 
+                  ref={fileInputRef}
+                  type="file" 
+                  className="hidden" 
+                  accept=".md,.txt"
+                  onChange={handleFileInput}
+                  data-testid="file-input"
+                />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg hover:border-primary/50 transition-colors" data-testid="file-info">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <i className="fas fa-file-circle-check text-2xl text-primary"></i>
+                      <div>
+                        <p className="font-semibold text-foreground" data-testid="file-name">{uploadedFile.name}</p>
+                        <p className="text-sm text-muted-foreground" data-testid="file-size">
+                          {formatFileSize(uploadedFile.size)}
+                        </p>
+                      </div>
+                    </div>
+                    <button 
+                      className="text-destructive hover:text-destructive/80 hover:scale-110 transition-transform"
+                      onClick={handleRemoveFile}
+                      data-testid="button-remove-file"
+                    >
+                      <i className="fas fa-circle-xmark text-2xl"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="flex gap-3">
+                  <button
+                    className="bg-primary text-primary-foreground px-6 py-3 rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 flex-1 font-semibold"
+                    onClick={handleUploadFile}
+                    disabled={isUploading}
+                    data-testid="button-start-parsing"
+                  >
+                    {isUploading ? (
+                      <>
+                        <i className="fas fa-spinner fa-spin"></i>
+                        Parsing...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-wand-magic-sparkles"></i>
+                        Parse Now
+                      </>
+                    )}
+                  </button>
+                  
+                  <button
+                    className="border border-border/50 text-foreground px-6 py-3 rounded-md hover:bg-destructive/10 hover:border-destructive/50 transition-colors flex items-center gap-2 disabled:opacity-50"
+                    onClick={handleRemoveFile}
+                    disabled={isUploading}
+                    data-testid="button-cancel"
+                  >
+                    <i className="fas fa-x"></i>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* TAB 2: LINK OR JSON */}
+          <TabsContent value="url" className="space-y-4">
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-semibold mb-3 block flex items-center gap-2">
+                  <i className="fas fa-circle-question text-primary"></i>
+                  Select chat source:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {(['chatgpt', 'grok', 'deepseek', 'claude'] as const).map(source => (
+                    <button
+                      key={source}
+                      onClick={() => setSourceType(source)}
+                      className={`py-2 px-3 rounded-md border transition-all font-medium ${
+                        sourceType === source
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'bg-background border-border/50 hover:border-primary'
+                      }`}
+                      data-testid={`button-source-${source}`}
+                    >
+                      {source === 'chatgpt' && <><i className="fas fa-robot mr-1"></i>ChatGPT</>}
+                      {source === 'grok' && <><i className="fas fa-bolt mr-1"></i>Grok</>}
+                      {source === 'deepseek' && <><i className="fas fa-magnifying-glass mr-1"></i>DeepSeek</>}
+                      {source === 'claude' && <><i className="fas fa-brain mr-1"></i>Claude</>}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-border/50 pt-4">
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-sm flex items-center gap-2">
+                    <i className="fas fa-code text-primary"></i>
+                    Option 1: Paste JSON
+                  </h3>
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-2 block flex items-center gap-1">
+                      <i className="fas fa-lightbulb text-yellow-500"></i>
+                      {sourceType === 'grok' && 'Go to Grok → Share → Export → Copy JSON'}
+                      {sourceType === 'chatgpt' && 'Go to ChatGPT → Share → Export → Copy JSON'}
+                      {sourceType === 'deepseek' && 'Go to DeepSeek → Share → Export → Copy JSON'}
+                      {sourceType === 'claude' && 'Go to Claude → Share → Export → Copy JSON'}
+                    </label>
+                    <textarea
+                      placeholder='Paste the JSON export here...'
+                      value={jsonText}
+                      onChange={(e) => setJsonText(e.target.value)}
+                      disabled={isUploading}
+                      className="w-full h-32 p-3 border border-border/50 rounded-md bg-background text-foreground text-sm font-mono resize-none focus:border-primary/50 outline-none transition-colors"
+                      data-testid="textarea-chat-json"
+                    />
+                  </div>
+                  <button
+                    className="w-full bg-primary text-primary-foreground px-6 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 font-semibold"
+                    onClick={async () => {
+                      if (!jsonText.trim()) {
+                        toast({
+                          title: "Error",
+                          description: "Please paste JSON content",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      setIsUploading(true);
+                      onParseProgress(1, 'Parsing JSON...', 'parsing');
+                      try {
+                        const response = await fetch('/api/import-chat', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            json: jsonText,
+                            source: sourceType,
+                          }),
+                          credentials: 'include',
+                        });
+                        if (!response.ok) throw new Error('Import failed');
+                        const result = await response.json();
+                        onParseProgress(3, 'Validating...', 'parsing');
+                        setTimeout(() => {
+                          onParseProgress(4, 'Done!', 'completed');
+                          setTimeout(() => {
+                            onParseComplete(result.projectId);
+                            toast({
+                              title: "✅ Import completed",
+                              description: `Found ${result.filesFound} files`,
+                            });
+                            setJsonText('');
+                          }, 500);
+                        }, 1000);
+                      } catch (error) {
+                        onParseProgress(0, 'Error', 'error');
+                        toast({
+                          title: "❌ Error",
+                          description: error instanceof Error ? error.message : "Import error",
+                          variant: "destructive",
+                        });
+                      } finally {
+                        setIsUploading(false);
+                      }
+                    }}
+                    disabled={isUploading || !jsonText.trim()}
+                  >
+                    {isUploading ? (
+                      <>
+                        <i className="fas fa-spinner fa-spin"></i>
+                        Importing...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-arrow-up-from-bracket"></i>
+                        Import JSON
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="border-t border-border/50 pt-4">
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-sm flex items-center gap-2">
+                    <i className="fas fa-link text-primary"></i>
+                    Option 2: Public Link
+                  </h3>
+                  <div>
+                    <Input
+                      type="url"
+                      placeholder="https://grok.com/share/... (if public)"
+                      value={urlInput}
+                      onChange={(e) => setUrlInput(e.target.value)}
+                      disabled={isUploading}
+                      className="border-border/50 focus:border-primary/50"
+                      data-testid="input-chat-url"
+                    />
+                  </div>
+                  <button
+                    className="w-full bg-secondary text-secondary-foreground px-6 py-2 rounded-md hover:bg-secondary/80 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 font-semibold"
+                    onClick={handleImportURL}
+                    disabled={isUploading || !urlInput.trim()}
+                    data-testid="button-import-url"
+                  >
+                    {isUploading ? (
+                      <>
+                        <i className="fas fa-spinner fa-spin"></i>
+                        Importing...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-download"></i>
+                        Import Link
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}
+
+
+════════════════════════════════════════════════════════════
+FILE: client/src/lib/chatParser.ts
+════════════════════════════════════════════════════════════
+
+// Client-side Chat Parser - Works 100% offline for small files!
+
+export interface FileInstruction {
+  path: string;
+  content: string;
+  type: 'file' | 'folder';
+  language?: string;
+}
+
+export interface ParsedChat {
+  files: FileInstruction[];
+  unrecognizedBlocks: {
+    content: string;
+    context: string;
+    lineNumber: number;
+    suggestedType?: string;
+  }[];
+}
+
+export class ClientChatParser {
+  constructor(private content: string) {}
+
+  public parse(): ParsedChat {
+    const lines = this.content.split('\n');
+    const unrecognizedBlocks: ParsedChat['unrecognizedBlocks'] = [];
+    const files: FileInstruction[] = [];
+
+    try {
+      // Extract file paths and structure
+      const fileMap = new Map<string, { type: 'file' | 'folder'; language?: string; content: string }>();
+
+      // 1. Detect folder structure from markdown trees
+      const treePattern = /^[\s\-\*]+(.+?)(?:\/)?$/gm;
+      const codeBlockPattern = /```(\w+)?\n([\s\S]*?)```/gm;
+      
+      // 2. Extract code blocks with language detection
+      let match;
+      let blockIndex = 0;
+      while ((match = codeBlockPattern.exec(this.content)) !== null) {
+        const language = match[1] || 'txt';
+        const blockContent = match[2];
+        
+        // Try to detect filename from context
+        const beforeBlock = this.content.substring(Math.max(0, match.index - 200), match.index);
+        const fileMatch = beforeBlock.match(/(?:file|path|:\s*|`)([\w\-/.]+\.[\w]+)(?:`|,|\s)/i);
+        
+        if (fileMatch) {
+          const filePath = fileMatch[1];
+          fileMap.set(filePath, {
+            type: 'file',
+            language,
+            content: blockContent.trim()
+          });
+        } else {
+          // Auto-generate filename
+          const autoName = `file_${blockIndex}.${language === 'txt' ? 'txt' : language}`;
+          fileMap.set(autoName, {
+            type: 'file',
+            language,
+            content: blockContent.trim()
+          });
+          blockIndex++;
+        }
+      }
+
+      // 3. Detect folder structures (nested paths)
+      const pathPattern = /(?:src|components|pages|utils|hooks|lib|server|client)\/[\w\-/.]+/gi;
+      const pathMatches = this.content.match(pathPattern) || [];
+      pathMatches.forEach(path => {
+        if (!fileMap.has(path)) {
+          fileMap.set(path, {
+            type: 'file',
+            content: ''
+          });
+        }
+      });
+
+      // 4. Convert to FileInstruction array
+      fileMap.forEach((value, path) => {
+        files.push({
+          path,
+          content: value.content,
+          type: value.type,
+          language: value.language
+        });
+      });
+
+      // 5. Find unrecognized elements
+      const recognizedContent = new Set<string>();
+      files.forEach(f => {
+        if (f.content) {
+          recognizedContent.add(f.content.substring(0, 50));
+        }
+      });
+
+      // Check for orphaned code blocks
+      while ((match = codeBlockPattern.exec(this.content)) !== null) {
+        const blockContent = match[2];
+        const contentSnippet = blockContent.substring(0, 50);
+        
+        if (!Array.from(recognizedContent).some(rc => rc === contentSnippet)) {
+          unrecognizedBlocks.push({
+            content: blockContent.substring(0, 500),
+            context: `Unmatched code block (${match[1] || 'unknown'})`,
+            lineNumber: this.content.substring(0, match.index).split('\n').length,
+            suggestedType: 'Orphaned Code'
+          });
+        }
+      }
+
+      return { files, unrecognizedBlocks };
+    } catch (error) {
+      return {
+        files,
+        unrecognizedBlocks: [{
+          content: String(error),
+          context: 'Client parser error',
+          lineNumber: 0,
+          suggestedType: 'Error'
+        }]
+      };
+    }
+  }
+}
+
+
+════════════════════════════════════════════════════════════
+FILE: server/routes.ts
+════════════════════════════════════════════════════════════
+
+import express, { Express } from 'express';
+import multer from 'multer';
+import JSZip from 'jszip';
+import { ChatParser } from './chatParser';
+import { storage } from './storage';
+import { ChatImporter } from './parsers/ChatImporter';
+import { createCheckoutSession } from './stripe';
+import { v4 as uuidv4 } from 'uuid';
+
+export async function registerRoutes(app: Express) {
+  const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 50 * 1024 * 1024 }
+  });
+  const chatImporter = new ChatImporter();
+
+  app.post('/api/parse-chat', upload.single('chatFile'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+
+      const content = req.file.buffer.toString('utf-8');
+      const parser = new ChatParser(content);
+      const parsed = parser.parse();
+
+      const projectId = uuidv4();
+      await storage.createParseProject({
+        name: req.file.originalname.replace(/\.[^.]+$/, ''),
+        originalFileName: req.file.originalname,
+      });
+
+      // Create files
+      for (const file of parsed.files) {
+        await storage.createParsedFile({
+          projectId,
+          filePath: file.path || 'untitled',
+          content: file.content || '',
+          fileType: file.type as 'file' | 'folder',
+          language: file.language,
+        });
+      }
+
+      // Create unrecognized elements
+      for (const element of parsed.unrecognizedBlocks) {
+        await storage.createUnrecognizedElement({
+          projectId,
+          content: element.content || '',
+          lineNumber: element.lineNumber || 0,
+          context: element.context || '',
+          suggestedType: 'unknown',
+        });
+      }
+
+      res.json({
+        projectId,
+        filesFound: parsed.files.filter(f => f.type === 'file').length,
+        unrecognizedCount: parsed.unrecognizedBlocks.length,
+      });
+    } catch (error) {
+      console.error('Parse error:', error);
+      res.status(500).json({ error: 'Failed to parse chat' });
+    }
+  });
+
+  app.post('/api/import-chat', express.json({ limit: '50mb' }), async (req, res) => {
+    try {
+      const { url, json, source } = req.body;
+      let content: string;
+
+      if (url) {
+        const result = await chatImporter.importFromURL(url);
+        content = result.content;
+      } else if (json) {
+        const result = await chatImporter.importFromJSON(json);
+        content = result.content;
+      } else {
+        return res.status(400).json({ error: 'Provide url or json' });
+      }
+
+      const parser = new ChatParser(content);
+      const parsed = parser.parse();
+
+      const projectId = uuidv4();
+      await storage.createParseProject({
+        name: `${source || 'Chat'}_${new Date().toISOString().slice(0, 10)}`,
+        originalFileName: `${source || 'import'}.txt`,
+      });
+
+      // Create files
+      for (const file of parsed.files) {
+        await storage.createParsedFile({
+          projectId,
+          filePath: file.path || 'untitled',
+          content: file.content || '',
+          fileType: file.type as 'file' | 'folder',
+          language: file.language,
+        });
+      }
+
+      // Create unrecognized elements
+      for (const element of parsed.unrecognizedBlocks) {
+        await storage.createUnrecognizedElement({
+          projectId,
+          content: element.content || '',
+          lineNumber: element.lineNumber || 0,
+          context: element.context || '',
+          suggestedType: 'unknown',
+        });
+      }
+
+      res.json({
+        projectId,
+        filesFound: parsed.files.filter(f => f.type === 'file').length,
+        unrecognizedCount: parsed.unrecognizedBlocks.length,
+      });
+    } catch (error) {
+      console.error('Import error:', error);
+      res.status(500).json({ error: `Failed to import: ${error}` });
+    }
+  });
+
+  app.get('/api/projects', async (req, res) => {
+    try {
+      const projects = await storage.getAllParseProjects();
+      res.json(projects);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to list projects' });
+    }
+  });
+
+  app.get('/api/projects/:id', async (req, res) => {
+    try {
+      const project = await storage.getParseProject(req.params.id);
+      if (!project) {
+        return res.status(404).json({ error: 'Project not found' });
+      }
+      res.json(project);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to get project' });
+    }
+  });
+
+  app.put('/api/unrecognized/:id', express.json(), async (req, res) => {
+    try {
+      const { resolved, suggestedType } = req.body;
+      
+      await storage.updateUnrecognizedElement(req.params.id, {
+        resolved,
+        suggestedType,
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error updating unrecognized element:', error);
+      res.status(500).json({ error: 'Błąd podczas aktualizacji elementu' });
+    }
+  });
+
+  app.get('/api/projects/:id/download', async (req, res) => {
+    try {
+      const fullProject = await storage.getFullProject(req.params.id);
+      
+      if (!fullProject) {
+        return res.status(404).json({ error: 'Project not found' });
+      }
+
+      const zip = new JSZip();
+      
+      fullProject.files
+        .filter(file => file.fileType === 'file' && file.content.trim())
+        .forEach(file => {
+          zip.file(file.filePath, file.content);
+        });
+
+      fullProject.files
+        .filter(file => file.fileType === 'folder')
+        .forEach(folder => {
+          zip.folder(folder.filePath);
+        });
+
+      if (fullProject.unrecognizedElements.length > 0) {
+        let readmeContent = `# ${fullProject.project.name}\n\n`;
+        readmeContent += `## Unrecognized Elements\n\n`;
+        readmeContent += `Found ${fullProject.unrecognizedElements.length} unrecognized elements:\n\n`;
+        
+        fullProject.unrecognizedElements.forEach((element, index) => {
+          readmeContent += `### Element ${index + 1}\n`;
+          readmeContent += `**Line:** ${element.lineNumber}\n`;
+          readmeContent += `**Context:** ${element.context}\n`;
+          readmeContent += `**Suggested Type:** ${element.suggestedType || 'Unknown'}\n`;
+          readmeContent += `**Content:**\n\`\`\`\n${element.content}\n\`\`\`\n\n`;
+        });
+        
+        zip.file('UNRECOGNIZED_ELEMENTS.md', readmeContent);
+      }
+
+      const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
+      
+      res.set({
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `attachment; filename="${fullProject.project.name}.zip"`,
+        'Content-Length': zipBuffer.length.toString(),
+      });
+      
+      res.send(zipBuffer);
+    } catch (error) {
+      console.error('Download error:', error);
+      res.status(500).json({ error: 'Failed to generate ZIP' });
+    }
+  });
+
+  // NOWY: Checkout endpoint
+  app.post('/api/checkout', express.json(), async (req, res) => {
+    try {
+      const { tier, email } = req.body;
+      
+      if (!['pro', 'enterprise'].includes(tier)) {
+        return res.status(400).json({ error: 'Invalid tier' });
+      }
+
+      const session = await createCheckoutSession(tier, email);
+      res.json({ url: session.url });
+    } catch (error) {
+      console.error('Checkout error:', error);
+      res.status(500).json({ error: 'Failed to create checkout session' });
+    }
+  });
+
+  return app;
+}
+
+
+════════════════════════════════════════════════════════════
+FILE: server/stripe.ts
+════════════════════════════════════════════════════════════
+
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+  apiVersion: '2024-11-20',
+});
+
+export const PRICING_TIERS = {
+  free: { priceId: 'price_free', amount: 0, tier: 'free' },
+  pro: { priceId: 'price_1234567890', amount: 2900, tier: 'pro' },
+  enterprise: { priceId: 'price_0987654321', amount: 9900, tier: 'enterprise' },
+};
+
+export async function createCheckoutSession(tier: 'pro' | 'enterprise', email: string) {
+  const tierConfig = tier === 'pro' ? PRICING_TIERS.pro : PRICING_TIERS.enterprise;
+  
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: tier === 'pro' ? 'PINpall Pro' : 'PINpall Enterprise',
+            description: tier === 'pro' 
+              ? '500 parsów/miesiąc + API access' 
+              : 'Unlimited parsów + White-label',
+          },
+          unit_amount: tierConfig.amount,
+          recurring: {
+            interval: 'month',
+            interval_count: 1,
+          },
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'subscription',
+    success_url: `${process.env.VITE_API_BASE || 'http://localhost:5000'}/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.VITE_API_BASE || 'http://localhost:5000'}/settings`,
+    customer_email: email,
+    metadata: {
+      tier,
+    },
+  });
+
+  return session;
+}
+
+export async function getSubscriptionStatus(customerId: string) {
+  const subscriptions = await stripe.subscriptions.list({
+    customer: customerId,
+    limit: 1,
+  });
+
+  if (subscriptions.data.length === 0) return null;
+  return subscriptions.data[0];
+}
+
+export async function cancelSubscription(subscriptionId: string) {
+  return await stripe.subscriptions.cancel(subscriptionId);
+}
+
+export { stripe };
+
+
+════════════════════════════════════════════════════════════
+FILE: server/index.ts
+════════════════════════════════════════════════════════════
+
+import express, { type Request, Response, NextFunction } from "express";
+import { registerRoutes } from "./routes";
+import { setupVite, serveStatic, log } from "./vite";
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+app.use((req, res, next) => {
+  const start = Date.now();
+  const path = req.path;
+  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+
+  const originalResJson = res.json;
+  res.json = function (bodyJson, ...args) {
+    capturedJsonResponse = bodyJson;
+    return originalResJson.apply(res, [bodyJson, ...args]);
+  };
+
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    if (path.startsWith("/api")) {
+      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+      if (capturedJsonResponse) {
+        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      }
+
+      if (logLine.length > 80) {
+        logLine = logLine.slice(0, 79) + "…";
+      }
+
+      log(logLine);
+    }
+  });
+
+  next();
+});
+
+(async () => {
+  const server = await registerRoutes(app);
+
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+
+    res.status(status).json({ message });
+    throw err;
+  });
+
+  // importantly only setup vite in development and after
+  // setting up all the other routes so the catch-all route
+  // doesn't interfere with the other routes
+  if (app.get("env") === "development") {
+    await setupVite(app, server);
+  } else {
+    serveStatic(app);
+  }
+
+  // ALWAYS serve the app on the port specified in the environment variable PORT
+  // Other ports are firewalled. Default to 5000 if not specified.
+  // this serves both the API and the client.
+  // It is the only port that is not firewalled.
+  const port = parseInt(process.env.PORT || '5000', 10);
+  server.listen({
+    port,
+    host: "0.0.0.0",
+    reusePort: true,
+  }, () => {
+    log(`serving on port ${port}`);
+  });
+})();
+
+
+════════════════════════════════════════════════════════════
+FILE: shared/schema.ts
+════════════════════════════════════════════════════════════
+
+import { sql } from "drizzle-orm";
+import { pgTable, text, varchar, json, integer, timestamp, boolean } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+});
+
+export const parseProjects = pgTable("parse_projects", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  originalFileName: text("original_file_name").notNull(),
+  fileSize: integer("file_size").notNull(),
+  parseStatus: text("parse_status").notNull(), // parsing, completed, error
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const parsedFiles = pgTable("parsed_files", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  projectId: varchar("project_id").references(() => parseProjects.id).notNull(),
+  filePath: text("file_path").notNull(),
+  content: text("content").notNull(),
+  fileType: text("file_type").notNull(),
+  language: text("language"),
+  lineCount: integer("line_count").notNull(),
+  isGenerated: boolean("is_generated").default(true),
+});
+
+export const unrecognizedElements = pgTable("unrecognized_elements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  projectId: varchar("project_id").references(() => parseProjects.id).notNull(),
+  content: text("content").notNull(),
+  context: text("context"),
+  lineNumber: integer("line_number"),
+  suggestedType: text("suggested_type"),
+  resolved: boolean("resolved").default(false),
+});
+
+export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  password: true,
+});
+
+export const insertParseProjectSchema = createInsertSchema(parseProjects).pick({
+  name: true,
+  originalFileName: true,
+  fileSize: true,
+});
+
+export const insertParsedFileSchema = createInsertSchema(parsedFiles).pick({
+  projectId: true,
+  filePath: true,
+  content: true,
+  fileType: true,
+  language: true,
+  lineCount: true,
+});
+
+export const insertUnrecognizedElementSchema = createInsertSchema(unrecognizedElements).pick({
+  projectId: true,
+  content: true,
+  context: true,
+  lineNumber: true,
+  suggestedType: true,
+});
+
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
+export type InsertParseProject = z.infer<typeof insertParseProjectSchema>;
+export type ParseProject = typeof parseProjects.$inferSelect;
+export type InsertParsedFile = z.infer<typeof insertParsedFileSchema>;
+export type ParsedFile = typeof parsedFiles.$inferSelect;
+export type InsertUnrecognizedElement = z.infer<typeof insertUnrecognizedElementSchema>;
+export type UnrecognizedElement = typeof unrecognizedElements.$inferSelect;
+
+export interface ParsedProject {
+  project: ParseProject;
+  files: ParsedFile[];
+  unrecognizedElements: UnrecognizedElement[];
+}
+
+export interface FileTypeStats {
+  [key: string]: number;
+}
+
+export interface ParseProgress {
+  currentStep: number;
+  totalSteps: number;
+  stepName: string;
+  status: 'idle' | 'parsing' | 'completed' | 'error';
+}
+

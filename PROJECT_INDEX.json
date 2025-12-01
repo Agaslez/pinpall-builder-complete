@@ -1,0 +1,39 @@
+{
+  "project": "PINpall Builder",
+  "version": "1.0.0",
+  "createdAt": "2025-11-30T02:39:50.131Z",
+  "structure": {
+    "client": [
+      "src/pages",
+      "src/components",
+      "src/lib",
+      "index.html"
+    ],
+    "server": [
+      "routes.ts",
+      "stripe.ts",
+      "index.ts"
+    ],
+    "shared": [
+      "schema.ts"
+    ]
+  },
+  "files": [
+    "package.json",
+    "tsconfig.json",
+    "vite.config.ts",
+    "tailwind.config.ts",
+    "client/src/App.tsx",
+    "client/src/pages/landing.tsx",
+    "client/src/pages/home.tsx",
+    "client/src/pages/tests.tsx",
+    "client/src/pages/settings.tsx",
+    "client/src/components/FileUpload.tsx",
+    "client/src/lib/chatParser.ts",
+    "server/routes.ts",
+    "server/stripe.ts",
+    "server/index.ts",
+    "shared/schema.ts",
+    "SETUP_INSTRUCTIONS.md"
+  ]
+}

@@ -1,0 +1,80 @@
+# Ulepszony Stefano Enterprise Builder from Chat Transcript
+$transcriptFile = "chat_transcript.md"
+$baseDir = "stefano-enterprise"
+
+if (-not (Test-Path $transcriptFile)) {
+    Write-Host "Brak pliku $transcriptFile – wklej transkrypt czatu i uruchom ponownie."
+    exit
+}
+
+# Read transcript
+$transcript = Get-Content $transcriptFile -Raw
+
+# Improved parse: only extract Create-File sections, ignore unrecognized
+$files = @{}
+$matches = [regex]::Matches($transcript, 'Create-File -Path "(.*?)" -Content @''(.*?)''@', 'Singleline')
+foreach ($match in $matches) {
+    $path = $match.Groups[1].Value.Trim()
+    $content = $match.Groups[2].Value.Trim()
+    $files[$path] = $content
+}
+
+# Log unrecognized (simple count)
+$unrecognizedCount = $transcript -split "\n" | Where-Object { $_ -match "Unprocessed|Nierozpoznane|Sugerowany typ" } | Measure-Object | Select-Object -ExpandProperty Count
+Write-Host "Skipped $unrecognizedCount unrecognized elements."
+
+# Create base dir
+New-Item -ItemType Directory -Path $baseDir -Force | Out-Null
+
+# Create files
+foreach ($path in $files.Keys) {
+    $fullPath = Join-Path $baseDir $path
+    $dir = Split-Path -Parent $fullPath
+    if ($dir) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
+    Set-Content -Path $fullPath -Value $files[$path]
+}
+
+# Generate README.md
+$readmeContent = @'
+# Stefano Enterprise - Instrukcja Wdrożenia
+
+1. Klonuj repo: git clone <repo> stefano-enterprise && cd stefano-enterprise
+
+2. Konfiguracja .env: cp .env.example .env i uzupełnij klucze.
+
+3. Docker: docker compose up -d --build
+
+4. Test API: curl https://localhost/api/health
+
+5. Frontend build: cd frontend && npm i && npm run build
+
+6. Terraform: cd terraform && terraform init && terraform apply
+
+7. DNS: A record na IP serwera.
+
+8. ML trening: docker compose run ml python train.py
+
+9. Pierwszy post: curl -X POST /api/admin/marketing/create -d '{"platform":"facebook","media_url":"https://example.jpg"}'
+
+10. Approval: Review/Approve/Schedule przez /admin.html
+
+11. Sprawdź post: SELECT * FROM marketing_jobs
+
+Playbook Zespołu
+- RACI: Content Lead (R briefy), Creative (R MP4), SMM (A publikacje), Performance (R ROI), Data (R dashboardy), ML (C boty).
+- Cadence: Pon plan, dzienny stand-up, Pt retro.
+- DoD: KPI, QC zielone, 2 OK, slot zaplanowany.
+- Rubryka jakości: min 4/5 (hook/CTA/wizual).
+- Kontrola social: Monitoring opinii, playbook kryzys, compliance.
+
+Backup: 0 3 * * * ./backup.sh
+
+Testy: npm test, python -m unittest, curl healthchecks.
+
+Powodzenia! 🚀
+'@
+
+Set-Content -Path (Join-Path $baseDir "README.md") -Value $readmeContent
+
+Write-Host "Projekt Stefano Enterprise stworzony w $baseDir. Otwórz w VS Code: code $baseDir"
+Write-Host "README.md zawiera instrukcje – przeczytaj i odpal docker compose up -d --build"

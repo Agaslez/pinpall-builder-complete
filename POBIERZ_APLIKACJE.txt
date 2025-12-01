@@ -1,0 +1,124 @@
+═══════════════════════════════════════════════════════════════
+🎯 POBIERZ APLIKACJĘ - DOKŁADNIE GDZIE KLIKNĄĆ W REPLIT
+═══════════════════════════════════════════════════════════════
+
+⚡ NAJSZYBCIEJ - 10 SEKUND:
+
+1. W REPLIT (górny prawy róg) → kliknij ikonę ⋮ (trzy kreski)
+2. Wybierz "Download" lub "Download project as .zip"
+3. ↓↓↓ GOTOWE! Masz pełną aplikację ↓↓↓
+
+═══════════════════════════════════════════════════════════════
+
+📍 GDZIE TO JEST W REPLIT:
+
+TOP RIGHT (górny prawy róg okna Replit):
+  ┌──────────────────────────────────┐
+  │  🔍  👤  📱  ⋮ ← TUTAJ KLIKNIJ   │
+  └──────────────────────────────────┘
+       
+Po kliknięciu zobaczysz menu:
+  • Share
+  • Download  ← KLIKNIJ TO
+  • Settings
+  • Help
+
+═══════════════════════════════════════════════════════════════
+
+✅ CO POBIERASZ:
+
+pinpall-builder.zip (lub podobna nazwa)
+  ├── client/                    (React UI)
+  ├── server/                    (Express API)
+  ├── shared/                    (Database schema)
+  ├── package.json              (Zależności)
+  ├── tsconfig.json             (TypeScript config)
+  ├── vite.config.ts            (Build config)
+  └── ... (wszystko co potrzeba)
+
+═══════════════════════════════════════════════════════════════
+
+🚀 PO POBRANIU - URUCHOM LOKALNIE:
+
+1. Rozpakuj ZIP na swoim komputerze
+2. Otwórz terminal w tym folderze
+3. Wpisz:
+
+   npm install
+   npm run dev
+
+4. Otwórz przeglądarkę: http://localhost:5000
+
+═══════════════════════════════════════════════════════════════
+
+❌ JEŚLI DOWNLOAD NIE DZIAŁA:
+
+Alternatywa - Pobierz foldery ręcznie:
+
+1. W REPLIT - lewa strona Files 📁
+2. Kliknij foldery pojedynczo:
+   - client → ⋮ → Download
+   - server → ⋮ → Download
+   - shared → ⋮ → Download
+3. Pobierz też:
+   - package.json → ⋮ → Download
+   - tsconfig.json → ⋮ → Download
+   - vite.config.ts → ⋮ → Download
+   - tailwind.config.ts → ⋮ → Download
+
+4. Ułóż strukturę:
+   moj-projekt/
+   ├── client/
+   ├── server/
+   ├── shared/
+   ├── package.json
+   └── ... pozostałe pliki
+
+5. Spakuj sam w ZIP (WinRAR, 7-Zip, itp.)
+
+═══════════════════════════════════════════════════════════════
+
+✅ ALTERNATYWA - PLIKI JUŻ GOTOWE W TYM REPLIT:
+
+Jeśli Download w menu nie działa, pobierz te pliki:
+  • PROJECT_BACKUP.txt - cały kod w jednym pliku
+  • README_DOWNLOAD.md - pełne instrukcje
+  • SETUP_INSTRUCTIONS.md - setup guide
+
+Każdy z nich ⋮ → Download
+
+═══════════════════════════════════════════════════════════════
+
+🎁 CO MASZ W APLIKACJI:
+
+✅ Hybrid parser (offline dla małych plików)
+✅ File upload drag-and-drop
+✅ Parsing progress tracking
+✅ ZIP export
+✅ 8 testów (wejdź na /tests)
+✅ Stripe payment integration
+✅ English + Polish
+✅ 100% działająca
+
+═══════════════════════════════════════════════════════════════
+
+📱 GDZIE TESTOWAĆ NA SWOIM REPLICIE:
+
+Po uruchomieniu (npm run dev):
+
+http://localhost:5000          ← Landing page
+http://localhost:5000/app      ← Parser
+http://localhost:5000/tests    ← 8 testów
+http://localhost:5000/settings ← Ustawienia
+
+═══════════════════════════════════════════════════════════════
+
+⚡ PROBLEM? 
+
+Wszystkie pliki źródłowe są w tym Replit.
+Możesz je skopiować ręcznie z edytora kodu.
+Nikt Ci nic nie schował - kod jest cały tutaj!
+
+═══════════════════════════════════════════════════════════════
+
+✨ GOTOWY? KLIKNIJ MENU ⋮ I DOWNLOAD!
