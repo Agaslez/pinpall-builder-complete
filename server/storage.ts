@@ -1,22 +1,31 @@
-import { 
-  type User, 
-  type InsertUser, 
-  type ParseProject, 
-  type InsertParseProject,
-  type ParsedFile,
+import {
   type InsertParsedFile,
-  type UnrecognizedElement,
+  type InsertParseProject,
   type InsertUnrecognizedElement,
-  type ParsedProject
+  type InsertUser,
+  type ParsedFile,
+  type ParsedProject,
+  type ParseProject,
+  type UnrecognizedElement,
+  type User
 } from "@shared/schema";
 import { randomUUID } from "crypto";
+import fs from "fs/promises";
+import path from "path";
+
+interface StorageData {
+  users: Record<string, User>;
+  parseProjects: Record<string, ParseProject>;
+  parsedFiles: Record<string, ParsedFile>;
+  unrecognizedElements: Record<string, UnrecognizedElement>;
+}
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
-  createParseProject(project: InsertParseProject): Promise<ParseProject>;
+  createParseProject(project: InsertParseProject & { id?: string }): Promise<ParseProject>;
   getParseProject(id: string): Promise<ParseProject | undefined>;
   getAllParseProjects(): Promise<ParseProject[]>;
   updateParseProjectStatus(id: string, status: string): Promise<void>;
@@ -33,17 +42,123 @@ export interface IStorage {
   getFullProject(projectId: string): Promise<ParsedProject | undefined>;
 }
 
-export class MemStorage implements IStorage {
+class BaseStorage {
+  protected async saveToFile(data: StorageData): Promise<void> {
+    try {
+      const storageDir = path.join(process.cwd(), 'storage');
+      await fs.mkdir(storageDir, { recursive: true });
+      
+      // Konwertuj daty na stringi przed zapisem
+      const serializableData = {
+        users: this.serializeDates(data.users),
+        parseProjects: this.serializeDates(data.parseProjects),
+        parsedFiles: this.serializeDates(data.parsedFiles),
+        unrecognizedElements: this.serializeDates(data.unrecognizedElements)
+      };
+      
+      await fs.writeFile(
+        path.join(storageDir, 'data.json'),
+        JSON.stringify(serializableData, null, 2),
+        'utf-8'
+      );
+    } catch (error) {
+      console.error('Failed to save storage data:', error);
+    }
+  }
+
+  protected async loadFromFile(): Promise<StorageData> {
+    try {
+      const storageDir = path.join(process.cwd(), 'storage');
+      const filePath = path.join(storageDir, 'data.json');
+      
+      const data = await fs.readFile(filePath, 'utf-8');
+      const parsed = JSON.parse(data);
+      
+      // Konwertuj stringi z powrotem na Date
+      return {
+        users: this.deserializeDates(parsed.users),
+        parseProjects: this.deserializeDates(parsed.parseProjects),
+        parsedFiles: this.deserializeDates(parsed.parsedFiles),
+        unrecognizedElements: this.deserializeDates(parsed.unrecognizedElements)
+      };
+    } catch (error) {
+      // Jeśli plik nie istnieje, zwróć pusty obiekt
+      return {
+        users: {},
+        parseProjects: {},
+        parsedFiles: {},
+        unrecognizedElements: {}
+      };
+    }
+  }
+
+  private serializeDates(obj: Record<string, any>): Record<string, any> {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => {
+        if (value instanceof Date) {
+          return [key, value.toISOString()];
+        }
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+          return [key, this.serializeDates(value)];
+        }
+        return [key, value];
+      })
+    );
+  }
+
+  private deserializeDates(obj: Record<string, any>): Record<string, any> {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => {
+        if (key === 'createdAt' || key === 'updatedAt') {
+          return [key, new Date(value)];
+        }
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+          return [key, this.deserializeDates(value)];
+        }
+        return [key, value];
+      })
+    );
+  }
+}
+
+export class MemStorage extends BaseStorage implements IStorage {
   private users: Map<string, User>;
   private parseProjects: Map<string, ParseProject>;
   private parsedFiles: Map<string, ParsedFile>;
   private unrecognizedElements: Map<string, UnrecognizedElement>;
 
   constructor() {
+    super();
     this.users = new Map();
     this.parseProjects = new Map();
     this.parsedFiles = new Map();
     this.unrecognizedElements = new Map();
+    this.initializeFromFile();
+  }
+
+  private async initializeFromFile() {
+    try {
+      const data = await this.loadFromFile();
+      
+      this.users = new Map(Object.entries(data.users));
+      this.parseProjects = new Map(Object.entries(data.parseProjects));
+      this.parsedFiles = new Map(Object.entries(data.parsedFiles));
+      this.unrecognizedElements = new Map(Object.entries(data.unrecognizedElements));
+      
+      console.log(`Loaded from storage: ${this.parseProjects.size} projects, ${this.parsedFiles.size} files`);
+    } catch (error) {
+      console.error('Failed to initialize storage from file:', error);
+    }
+  }
+
+  private async saveAll() {
+    const data: StorageData = {
+      users: Object.fromEntries(this.users),
+      parseProjects: Object.fromEntries(this.parseProjects),
+      parsedFiles: Object.fromEntries(this.parsedFiles),
+      unrecognizedElements: Object.fromEntries(this.unrecognizedElements)
+    };
+    await this.saveToFile(data);
   }
 
   async getUser(id: string): Promise<User | undefined> {
@@ -60,11 +175,12 @@ export class MemStorage implements IStorage {
     const id = randomUUID();
     const user: User = { ...insertUser, id };
     this.users.set(id, user);
+    await this.saveAll();
     return user;
   }
 
-  async createParseProject(insertProject: InsertParseProject): Promise<ParseProject> {
-    const id = randomUUID();
+  async createParseProject(insertProject: InsertParseProject & { id?: string }): Promise<ParseProject> {
+    const id = insertProject.id || randomUUID();
     const now = new Date();
     const project: ParseProject = {
       ...insertProject,
@@ -72,8 +188,10 @@ export class MemStorage implements IStorage {
       parseStatus: 'parsing',
       createdAt: now,
       updatedAt: now,
+      fileSize: insertProject.fileSize || 0,
     };
     this.parseProjects.set(id, project);
+    await this.saveAll();
     return project;
   }
 
@@ -92,6 +210,7 @@ export class MemStorage implements IStorage {
       project.parseStatus = status;
       project.updatedAt = new Date();
       this.parseProjects.set(id, project);
+      await this.saveAll();
     }
   }
 
@@ -101,9 +220,11 @@ export class MemStorage implements IStorage {
       ...insertFile, 
       id, 
       language: insertFile.language || null,
-      isGenerated: true 
+      isGenerated: true,
+      lineCount: insertFile.lineCount || 0,
     };
     this.parsedFiles.set(id, file);
+    await this.saveAll();
     return file;
   }
 
@@ -118,11 +239,13 @@ export class MemStorage implements IStorage {
     if (file) {
       Object.assign(file, updates);
       this.parsedFiles.set(id, file);
+      await this.saveAll();
     }
   }
 
   async deleteParsedFile(id: string): Promise<void> {
     this.parsedFiles.delete(id);
+    await this.saveAll();
   }
 
   async createUnrecognizedElement(insertElement: InsertUnrecognizedElement): Promise<UnrecognizedElement> {
@@ -136,6 +259,7 @@ export class MemStorage implements IStorage {
       resolved: false 
     };
     this.unrecognizedElements.set(id, element);
+    await this.saveAll();
     return element;
   }
 
@@ -149,6 +273,7 @@ export class MemStorage implements IStorage {
     if (element) {
       Object.assign(element, updates);
       this.unrecognizedElements.set(id, element);
+      await this.saveAll();
     }
   }
 

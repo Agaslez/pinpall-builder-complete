@@ -57,6 +57,36 @@ export class UniversalFileParser {
     ],
   };
 
+  private static contentPatterns: Record<string, RegExp[]> = {
+    javascript: [
+      /console\.log|function\s+\w+\s*\(|const\s+\w+\s*=|let\s+\w+\s*=|var\s+\w+\s*=/,
+      /export\s+(default|const|function|class)/,
+      /import\s+.*from\s+['"]/,
+    ],
+    typescript: [
+      /interface\s+\w+|type\s+\w+\s*=/, 
+      /:\s*\w+\s*[<{]/,
+      /as\s+\w+/,
+    ],
+    python: [
+      /def\s+\w+\s*\(|class\s+\w+/,
+      /import\s+\w+|from\s+\w+\s+import/,
+      /print\(|#.*$/,
+    ],
+    html: [
+      /<!DOCTYPE html>|<html|<head|<body/,
+      /<[a-z]+[^>]*>/,
+    ],
+    css: [
+      /{[^}]*}|:[^;]+;|@media/,
+      /\.\w+\s*{/,
+    ],
+    json: [
+      /^{\s*"[^"]+"\s*:/,
+      /"[^"]+"\s*:\s*(?:"[^"]*"|\d+|true|false|null)/,
+    ],
+  };
+
   public static parseFile(
     filePath: string,
     options: ParseOptions = {}
@@ -64,7 +94,7 @@ export class UniversalFileParser {
     const stats = fs.statSync(filePath);
     const extension = path.extname(filePath).toLowerCase();
 
-    const language = this.detectLanguage(filePath, extension);
+    const language = this.detectLanguage(filePath, extension, '');
     const content = fs.readFileSync(filePath, "utf-8");
     const lines = content.split("\n").length;
     const dependencies = this.extractDependencies(content, language);
@@ -144,7 +174,7 @@ export class UniversalFileParser {
     filePath: string = ""
   ): ParsedFile {
     const extension = path.extname(filePath).toLowerCase();
-    const language = this.detectLanguage(filePath, extension);
+    const language = this.detectLanguage(filePath, extension, content);
     const lines = content.split("\n").length;
 
     return {
@@ -159,7 +189,8 @@ export class UniversalFileParser {
     };
   }
 
-  public static detectLanguage(filePath: string, extension: string): string {
+  public static detectLanguage(filePath: string, extension: string, content: string = ""): string {
+    // 1. Spróbuj po rozszerzeniu
     for (const [lang, exts] of Object.entries(this.languageExtensions)) {
       if (exts.includes(extension)) {
         return lang;
@@ -170,7 +201,66 @@ export class UniversalFileParser {
     if (base === "dockerfile") return "dockerfile";
     if (base === "makefile") return "makefile";
 
+    // 2. Jeśli mamy zawartość, spróbuj wykryć po zawartości
+    if (content && content.trim().length > 0) {
+      const detectedByContent = this.detectLanguageByContent(content);
+      if (detectedByContent !== "unknown") {
+        return detectedByContent;
+      }
+    }
+
+    // 3. Domyślnie "unknown"
     return "unknown";
+  }
+
+  private static detectLanguageByContent(content: string): string {
+    const scores: Record<string, number> = {};
+    
+    // Sprawdź każdy język
+    for (const [language, patterns] of Object.entries(this.contentPatterns)) {
+      let score = 0;
+      
+      for (const pattern of patterns) {
+        if (pattern.test(content)) {
+          score++;
+        }
+      }
+      
+      if (score > 0) {
+        scores[language] = score;
+      }
+    }
+    
+    // Znajdź język z najwyższym score
+    let bestLanguage = "unknown";
+    let bestScore = 0;
+    
+    for (const [language, score] of Object.entries(scores)) {
+      if (score > bestScore) {
+        bestScore = score;
+        bestLanguage = language;
+      }
+    }
+    
+    // Specjalne przypadki
+    if (content.trim().startsWith("{") && content.trim().endsWith("}")) {
+      try {
+        JSON.parse(content);
+        return "json";
+      } catch {
+        // Nie jest JSON
+      }
+    }
+    
+    if (content.includes("<?xml") || content.includes("<xml")) {
+      return "xml";
+    }
+    
+    if (content.includes("<!DOCTYPE html>") || content.includes("<html")) {
+      return "html";
+    }
+    
+    return bestLanguage;
   }
 
   private static extractDependencies(
@@ -241,17 +331,33 @@ export class UniversalFileParser {
       let current = tree;
 
       parts.forEach((part, index) => {
-        if (index === parts.length - 1) {
-          current[part] = {
-            type: file.type,
-            language: file.language,
-            size: file.size,
-            lines: file.lines,
-          };
+        const isLast = index === parts.length - 1;
+
+        if (isLast) {
+          // Ostatni segment - plik lub folder
+          if (current[part] && typeof current[part] === "object") {
+            // Węzeł już istnieje (może mieć dzieci z poprzednich plików)
+            // Aktualizujemy właściwości, ale zachowujemy istniejące klucze (dzieci)
+            current[part].type = file.type;
+            current[part].language = file.language;
+            current[part].size = file.size;
+            current[part].lines = file.lines;
+          } else {
+            // Nowy węzeł
+            current[part] = {
+              type: file.type,
+              language: file.language,
+              size: file.size,
+              lines: file.lines,
+            };
+          }
         } else {
+          // Pośredni segment (folder)
           if (!current[part]) {
             current[part] = {};
           }
+          // Jeśli current[part] jest obiektem z właściwościami (np. type, language),
+          // ale nie ma kluczy-dzieci, to traktujemy go jako folder i przechodzimy dalej.
           current = current[part];
         }
       });
@@ -265,19 +371,24 @@ export class UniversalFileParser {
     prefix = ""
   ): string {
     let result = "";
-    const keys = Object.keys(tree).sort();
+    // Klucze, które są właściwościami metadanych, a nie dziećmi
+    const metadataKeys = ["type", "language", "size", "lines"];
+    // Pobierz klucze, które są dziećmi (nie są metadanymi)
+    const childKeys = Object.keys(tree).filter(
+      (key) => !metadataKeys.includes(key)
+    );
+    childKeys.sort();
 
-    keys.forEach((key, index) => {
-      const isLast = index === keys.length - 1;
+    childKeys.forEach((key, index) => {
+      const isLast = index === childKeys.length - 1;
       const connector = isLast ? "└── " : "├── ";
       const childPrefix = prefix + (isLast ? "    " : "│   ");
 
       const node = tree[key];
       if (node.type === "folder") {
         result += `${prefix}${connector}${key}/\n`;
-        if (typeof node === "object" && !node.type) {
-          result += this.formatTree(node, childPrefix);
-        }
+        // Rekurencyjnie formatuj dzieci, przekazując cały obiekt node
+        result += this.formatTree(node, childPrefix);
       } else {
         const size =
           node.size && node.lines

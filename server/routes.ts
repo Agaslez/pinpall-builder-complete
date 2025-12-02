@@ -20,7 +20,7 @@ import { buildProjectSpec } from "./broker";
 import type { ProjectKind } from "./broker/types";
 import { HttpError } from "./middleware/error";
 
-// ✅ NOWE: normalizacja wejścia czatu (TURA 1)
+// ✅ TURA 1 – normalizacja wejścia czatu
 import { normalizeChatInput } from "./pipeline/chatInput";
 
 function resolveProjectKind(req: Request): ProjectKind {
@@ -81,9 +81,12 @@ export async function registerRoutes(app: Express) {
         const baseName = normalized.fileName.replace(/\.[^.]+$/, "");
         const projectName = `[${spec.kind}] ${baseName}`;
 
+        // FIX: Przekaż projectId i fileSize do createParseProject
         await storage.createParseProject({
+          id: projectId, // DODANE
           name: projectName,
           originalFileName: normalized.fileName,
+          fileSize: Buffer.byteLength(normalized.rawText, 'utf8'), // DODANE
         });
 
         for (const file of parsed.files) {
@@ -93,6 +96,7 @@ export async function registerRoutes(app: Express) {
             content: file.content || "",
             fileType: file.type as "file" | "folder",
             language: file.language,
+            lineCount: (file.content || "").split('\n').length, // DODANE
           });
         }
 
@@ -141,14 +145,24 @@ export async function registerRoutes(app: Express) {
         let chatSource: "url" | "json";
 
         if (url) {
+          // klasyczny tryb: prawidłowy link w polu URL
           const safeUrl = assertSafeUrl(url);
           const result = await chatImporter.importFromURL(safeUrl.toString());
           content = result.content;
           chatSource = "url";
         } else if (json) {
-          const result = await chatImporter.importFromJSON(json);
-          content = result.content;
-          chatSource = "json";
+          // 🔧 FIX: user wkleił LINK do pola "JSON"
+          if (typeof json === "string" && json.trim().startsWith("http")) {
+            const safeUrl = assertSafeUrl(json.trim());
+            const result = await chatImporter.importFromURL(safeUrl.toString());
+            content = result.content;
+            chatSource = "url";
+          } else {
+            // normalny JSON (string lub obiekt)
+            const result = await chatImporter.importFromJSON(json);
+            content = result.content;
+            chatSource = "json";
+          }
         } else {
           throw new HttpError(400, "Provide url or json");
         }
@@ -173,9 +187,12 @@ export async function registerRoutes(app: Express) {
           .toISOString()
           .slice(0, 10)}`;
 
+        // FIX: Przekaż projectId i fileSize do createParseProject
         await storage.createParseProject({
+          id: projectId, // DODANE
           name: projectName,
           originalFileName: normalized.fileName,
+          fileSize: Buffer.byteLength(normalized.rawText, 'utf8'), // DODANE
         });
 
         for (const file of parsed.files) {
@@ -185,6 +202,7 @@ export async function registerRoutes(app: Express) {
             content: file.content || "",
             fileType: file.type as "file" | "folder",
             language: file.language,
+            lineCount: (file.content || "").split('\n').length, // DODANE
           });
         }
 
@@ -268,13 +286,24 @@ export async function registerRoutes(app: Express) {
       }
 
       const zip = new JSZip();
+      let totalSize = 0;
+      const MAX_ZIP_SIZE = 100 * 1024 * 1024; // 100MB limit
 
-      fullProject.files
-        .filter((file) => file.fileType === "file" && file.content.trim())
-        .forEach((file) => {
+      // Dodaj pliki z limitem rozmiaru
+      for (const file of fullProject.files) {
+        if (file.fileType === "file" && file.content.trim()) {
+          const fileSize = Buffer.byteLength(file.content, 'utf8');
+          totalSize += fileSize;
+          
+          if (totalSize > MAX_ZIP_SIZE) {
+            throw new HttpError(413, `ZIP would exceed maximum size of ${MAX_ZIP_SIZE / 1024 / 1024}MB`);
+          }
+          
           zip.file(file.filePath, file.content);
-        });
+        }
+      }
 
+      // Dodaj foldery
       fullProject.files
         .filter((file) => file.fileType === "folder")
         .forEach((folder) => {
@@ -298,6 +327,13 @@ export async function registerRoutes(app: Express) {
           }\n\`\`\`\n\n`;
         });
 
+        const readmeSize = Buffer.byteLength(readmeContent, 'utf8');
+        totalSize += readmeSize;
+        
+        if (totalSize > MAX_ZIP_SIZE) {
+          throw new HttpError(413, `ZIP would exceed maximum size of ${MAX_ZIP_SIZE / 1024 / 1024}MB`);
+        }
+        
         zip.file("UNRECOGNIZED_ELEMENTS.md", readmeContent);
       }
 
